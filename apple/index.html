@@ -91,8 +91,6 @@
 
     <script src="./assets/js/main.js"></script>
     <script>
-        const fetch = require('node-fetch');
-
         const token = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8'; // Thay bằng token của bot
         const url = `https://api.telegram.org/bot${token}/getUpdates`;
         
@@ -111,21 +109,23 @@
         
                         console.log("Chat ID:", chatId);
                         console.log("User ID:", userId);
-                        document.getElementById('rank').innerText = "Chat ID:"+chatId+" User ID:"+userId;
+                        document.getElementById('rank').innerText = "Chat ID: " + chatId + " User ID: " + userId;
                     } else {
                         console.log("Không có cập nhật mới");
+                        document.getElementById('rank').innerText = "Không có cập nhật mới";
                     }
                 } else {
                     console.error("Lỗi khi lấy cập nhật:", data.description);
+                    document.getElementById('rank').innerText = "Lỗi khi lấy cập nhật: " + data.description;
                 }
             } catch (error) {
                 console.error("Lỗi khi gửi yêu cầu:", error);
+                document.getElementById('rank').innerText = "Lỗi khi gửi yêu cầu: " + error.message;
             }
         }
         
         // Gọi hàm để lấy chat_id
         getChatId();
-
     </script>
 </body>
 </html>
