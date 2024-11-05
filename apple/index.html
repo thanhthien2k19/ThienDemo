@@ -104,7 +104,7 @@
                 if (updates.length > 0) {
                     const lastUpdate = updates[updates.length - 1];
                     const userId = lastUpdate.message.from.id; // Lấy user_id của người dùng
-                    console.log("User ID:", userId);
+                    console.log("Data:", updates );
                     
                     // Gọi hàm để lấy avatar của người dùng
                     await getUserAvatar(userId);
