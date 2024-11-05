@@ -91,29 +91,70 @@
 
     <script src="./assets/js/main.js"></script>
     <script>
-        const token = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8'; // Thay bằng token của bot
-        const url = `https://api.telegram.org/bot${token}/getUpdates`;
-        
-        async function getChatId() {
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-        
-                if (data.ok) {
-                    // Hiển thị toàn bộ data.result dưới dạng JSON
-                    document.getElementById('rank').innerText = JSON.stringify(data.result, null, 2);
+    const token = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8'; // Thay bằng token của bot
+    const getUpdatesUrl = `https://api.telegram.org/bot${token}/getUpdates`;
+    const sendMessageUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+
+    async function getChatId() {
+        try {
+            const response = await fetch(getUpdatesUrl);
+            const data = await response.json();
+
+            if (data.ok) {
+                // Lấy cập nhật mới nhất
+                const updates = data.result;
+                if (updates.length > 0) {
+                    const lastUpdate = updates[updates.length - 1];
+                    const chatId = lastUpdate.message.chat.id; // Lấy chat_id của người dùng
+                    console.log("Chat ID:", chatId);
+                    
+                    // Gửi tin nhắn đến chat_id đã lấy
+                    await sendMessage(chatId, 'Hello, this is a message from my bot!');
                 } else {
-                    console.error("Lỗi khi lấy cập nhật:", data.description);
-                    document.getElementById('rank').innerText = "Lỗi khi lấy cập nhật: " + data.description;
+                    console.log("Không có cập nhật mới");
+                    document.getElementById('rank').innerText = "Không có cập nhật mới";
                 }
-            } catch (error) {
-                console.error("Lỗi khi gửi yêu cầu:", error);
-                document.getElementById('rank').innerText = "Lỗi khi gửi yêu cầu: " + error.message;
+            } else {
+                console.error("Lỗi khi lấy cập nhật:", data.description);
+                document.getElementById('rank').innerText = "Lỗi khi lấy cập nhật: " + data.description;
             }
+        } catch (error) {
+            console.error("Lỗi khi gửi yêu cầu:", error);
+            document.getElementById('rank').innerText = "Lỗi khi gửi yêu cầu: " + error.message;
         }
-        
-        // Gọi hàm để lấy chat_id
-        getChatId();
-    </script>
+    }
+
+    async function sendMessage(chatId, message) {
+        try {
+            const response = await fetch(sendMessageUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.ok) {
+                console.log('Tin nhắn đã được gửi thành công:', data.result);
+                document.getElementById('rank').innerText = JSON.stringify(data.result, null, 2);
+            } else {
+                console.error('Lỗi khi gửi tin nhắn:', data.description);
+                document.getElementById('rank').innerText = "Lỗi khi gửi tin nhắn: " + data.description;
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            document.getElementById('rank').innerText = "Lỗi khi gửi yêu cầu gửi tin nhắn: " + error.message;
+        }
+    }
+
+    // Gọi hàm để lấy chat_id
+    getChatId();
+</script>
+
 </body>
 </html>
