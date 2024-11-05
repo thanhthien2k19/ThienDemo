@@ -9,18 +9,14 @@
     <meta name="theme-color" content="#f19e36" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.ico">
-
 </head>
 <body>
-
-    
     <div class="squad-container">
         <div class="login">
             <div class="login-detail">
                 <div class="profile">
                     <span></span>
                 </div>
-
                 <div class="user-data">
                     <span class="name"></span>
                     <span class="user-rank"></span>
@@ -53,10 +49,11 @@
     </div>
     
     <div class="coin-container">
-     
         <img src="./assets/images/hamster.png" id="coin" class="select-none" width="300px" />
     </div>
-<br><br><br>
+    
+    <br><br><br>
+    
     <div class="menu-container">
         <div class="power">
             <img src="./assets/images/28.png" width="40px">
@@ -86,7 +83,19 @@
         <div class="progress"></div>
     </div>
 
+    <!-- Thêm đoạn mã JavaScript dưới đây -->
+    <div class="current-url-container">
+        <h2>URL hiện tại:</h2>
+        <p id="current-url"></p>
+    </div>
 
     <script src="./assets/js/main.js"></script>
+    <script>
+        // Lấy URL hiện tại
+        const currentUrl = window.location.href;
+
+        // In ra URL vào thẻ <p>
+        document.getElementById('current-url').innerText = currentUrl;
+    </script>
 </body>
 </html>
