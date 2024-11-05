@@ -91,9 +91,40 @@
 
     <script src="./assets/js/main.js"></script>
     <script>
-        // Lấy URL hiện tại
-        const currentUrl = window.location.href;
-        document.getElementById('rank').innerText = currentUrl;
+        const fetch = require('node-fetch');
+
+        const token = 'YOUR_BOT_TOKEN'; // Thay bằng token của bot
+        const url = `https://api.telegram.org/bot${token}/getUpdates`;
+        
+        async function getChatId() {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                if (data.ok) {
+                    // Lấy update mới nhất
+                    const updates = data.result;
+                    if (updates.length > 0) {
+                        const lastUpdate = updates[updates.length - 1];
+                        const chatId = lastUpdate.message.chat.id; // Lấy chat_id của người dùng
+                        const userId = lastUpdate.message.from.id; // Lấy user_id của người dùng
+        
+                        console.log("Chat ID:", chatId);
+                        console.log("User ID:", userId);
+                    } else {
+                        console.log("Không có cập nhật mới");
+                    }
+                } else {
+                    console.error("Lỗi khi lấy cập nhật:", data.description);
+                }
+            } catch (error) {
+                console.error("Lỗi khi gửi yêu cầu:", error);
+            }
+        }
+        
+        // Gọi hàm để lấy chat_id
+        getChatId();
+
     </script>
 </body>
 </html>
