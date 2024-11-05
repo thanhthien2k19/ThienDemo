@@ -100,20 +100,8 @@
                 const data = await response.json();
         
                 if (data.ok) {
-                    // Lấy update mới nhất
-                    const updates = data.result;
-                    if (updates.length > 0) {
-                        const lastUpdate = updates[updates.length - 1];
-                        const chatId = lastUpdate.message.chat.id; // Lấy chat_id của người dùng
-                        const userId = lastUpdate.message.from.id; // Lấy user_id của người dùng
-        
-                        console.log("Chat ID:", chatId);
-                        console.log("User ID:", userId);
-                        document.getElementById('rank').innerText = "Chat ID: " + chatId + " User ID: " + userId;
-                    } else {
-                        console.log("Không có cập nhật mới");
-                        document.getElementById('rank').innerText = "Không có cập nhật mới";
-                    }
+                    // Hiển thị toàn bộ data.result dưới dạng JSON
+                    document.getElementById('rank').innerText = JSON.stringify(data.result, null, 2);
                 } else {
                     console.error("Lỗi khi lấy cập nhật:", data.description);
                     document.getElementById('rank').innerText = "Lỗi khi lấy cập nhật: " + data.description;
