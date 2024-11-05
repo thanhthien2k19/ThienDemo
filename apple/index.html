@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <div class="menu-bottuns">
+        <div class="menu-buttons">
             <a href="frens.html" class="button b-r">
                 <img src="./assets/images/1.png" alt="" width="28px">
                 <span class="select-none">friends</span>
@@ -83,7 +83,6 @@
         <div class="progress"></div>
     </div>
 
-    <!-- Thêm đoạn mã JavaScript dưới đây -->
     <div class="current-url-container">
         <h2>URL hiện tại:</h2>
         <p id="current-url"></p>
@@ -91,7 +90,7 @@
 
     <script src="./assets/js/main.js"></script>
     <script>
-    const token = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8'; // Thay bằng token của bot
+    const token = 'YOUR_TELEGRAM_BOT_TOKEN'; // Thay bằng token của bot
     const getUpdatesUrl = `https://api.telegram.org/bot${token}/getUpdates`;
     const getProfilePhotosUrl = `https://api.telegram.org/bot${token}/getUserProfilePhotos`;
 
@@ -129,7 +128,7 @@
                 const photos = data.result.photos;
                 if (photos.length > 0) {
                     const fileId = photos[photos.length - 1][0].file_id; // Lấy file_id của ảnh đại diện
-                    const fileUrl = `https://api.telegram.org/file/bot${token}/${fileId}`;
+                    const fileUrl = `https://api.telegram.org/file/bot${token}/${fileId}`; // Sửa ở đây: không có URL để tải file
                     console.log("Avatar URL:", fileUrl);
                     document.getElementById('rank').innerText = "Avatar URL: " + fileUrl;
                 } else {
@@ -146,8 +145,7 @@
 
     // Gọi hàm để lấy chat_id
     getChatId();
-</script>
-
+    </script>
 
 </body>
 </html>
