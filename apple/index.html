@@ -93,7 +93,7 @@
     <script>
     const token = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8'; // Thay bằng token của bot
     const getUpdatesUrl = `https://api.telegram.org/bot${token}/getUpdates`;
-    const sendMessageUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+    const getProfilePhotosUrl = `https://api.telegram.org/bot${token}/getUserProfilePhotos`;
 
     async function getChatId() {
         try {
@@ -101,60 +101,53 @@
             const data = await response.json();
 
             if (data.ok) {
-                // Lấy cập nhật mới nhất
                 const updates = data.result;
                 if (updates.length > 0) {
                     const lastUpdate = updates[updates.length - 1];
-                    const chatId = lastUpdate.message.chat.id; // Lấy chat_id của người dùng
-                    console.log("Chat ID:", chatId);
+                    const userId = lastUpdate.message.from.id; // Lấy user_id của người dùng
+                    console.log("User ID:", userId);
                     
-                    // Gửi tin nhắn đến chat_id đã lấy
-                    await sendMessage(chatId, 'Hello, this is a message from my bot!');
+                    // Gọi hàm để lấy avatar của người dùng
+                    await getUserAvatar(userId);
                 } else {
                     console.log("Không có cập nhật mới");
-                    document.getElementById('rank').innerText = "Không có cập nhật mới";
                 }
             } else {
                 console.error("Lỗi khi lấy cập nhật:", data.description);
-                document.getElementById('rank').innerText = "Lỗi khi lấy cập nhật: " + data.description;
             }
         } catch (error) {
             console.error("Lỗi khi gửi yêu cầu:", error);
-            document.getElementById('rank').innerText = "Lỗi khi gửi yêu cầu: " + error.message;
         }
     }
 
-    async function sendMessage(chatId, message) {
+    async function getUserAvatar(userId) {
         try {
-            const response = await fetch(sendMessageUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                }),
-            });
-
+            const response = await fetch(`${getProfilePhotosUrl}?user_id=${userId}`);
             const data = await response.json();
 
             if (data.ok) {
-                console.log('Tin nhắn đã được gửi thành công:', data.result);
-                document.getElementById('rank').innerText = JSON.stringify(data.result, null, 2);
+                const photos = data.result.photos;
+                if (photos.length > 0) {
+                    const fileId = photos[photos.length - 1][0].file_id; // Lấy file_id của ảnh đại diện
+                    const fileUrl = `https://api.telegram.org/file/bot${token}/${fileId}`;
+                    console.log("Avatar URL:", fileUrl);
+                    document.getElementById('rank').innerText = "Avatar URL: " + fileUrl;
+                } else {
+                    console.log("Người dùng không có ảnh đại diện");
+                    document.getElementById('rank').innerText = "Người dùng không có ảnh đại diện";
+                }
             } else {
-                console.error('Lỗi khi gửi tin nhắn:', data.description);
-                document.getElementById('rank').innerText = "Lỗi khi gửi tin nhắn: " + data.description;
+                console.error("Lỗi khi lấy ảnh đại diện:", data.description);
             }
         } catch (error) {
-            console.error('Lỗi:', error);
-            document.getElementById('rank').innerText = "Lỗi khi gửi yêu cầu gửi tin nhắn: " + error.message;
+            console.error("Lỗi khi gửi yêu cầu lấy avatar:", error);
         }
     }
 
     // Gọi hàm để lấy chat_id
     getChatId();
 </script>
+
 
 </body>
 </html>
