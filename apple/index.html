@@ -1,151 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThienDemo</title>
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/responsive.css">
-    <meta name="theme-color" content="#f19e36" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.ico">
-</head>
-<body>
-    <div class="squad-container">
-        <div class="login">
-            <div class="login-detail">
-                <div class="profile">
-                    <span></span>
-                </div>
-                <div class="user-data">
-                    <span class="name"></span>
-                    <span class="user-rank"></span>
-                </div>
-            </div>
-
-            <div>
-                <a href="login.html">
-                    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path opacity="0.8" d="M2.00098 11.999L16.001 11.999M16.001 11.999L12.501 8.99902M16.001 11.999L12.501 14.999" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path opacity="0.5" d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                </a>
-            </div>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | MccGameMini</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">MccGameMini</div>
+      </div>
     </div>
-
-    <div class="coin-count-container">
-        <img src="./assets/images/hamster.png" width="45px">
-        <h1 class="select-none"></h1>
-    </div>
-
-    <div class="rank-container">
-        <div class="rank-items">
-            <h3 class="select-none"></h3>
-            <span></span>
-            <img src="./assets/images/hamster.png" class="select-none" width="30px">
-            <span id="rank" class="select-none">ThienDemo</span>
-        </div>
-    </div>
-    
-    <div class="coin-container">
-        <img src="./assets/images/hamster.png" id="coin" class="select-none" width="300px" />
-    </div>
-    
-    <br><br><br>
-    
-    <div class="menu-container">
-        <div class="power">
-            <img src="./assets/images/28.png" width="40px">
-            <div class="power-count">
-                <span id="power" class="select-none">0</span>
-                <span class="gray select-none" id="total">/0</span>
-            </div>
-        </div>
-
-        <div class="menu-buttons">
-            <a href="frens.html" class="button b-r">
-                <img src="./assets/images/1.png" alt="" width="28px">
-                <span class="select-none">friends</span>
-            </a>
-            <a href="earn.html" class="button b-r">
-                <img src="./assets/images/2.png" alt="" width="28px">
-                <span class="select-none">tasks</span>
-            </a>
-            <a href="boost.html" class="button">
-                <img src="./assets/images/3.png" alt="" width="28px">
-                <span class="select-none">balance</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="progress-bar">
-        <div class="progress"></div>
-    </div>
-
-    <div class="current-url-container">
-        <h2>URL hiện tại:</h2>
-        <p id="current-url"></p>
-    </div>
-
-    <script src="./assets/js/main.js"></script>
     <script>
-    const token = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8'; // Thay bằng token của bot
-    const getUpdatesUrl = `https://api.telegram.org/bot${token}/getUpdates`;
-    const getProfilePhotosUrl = `https://api.telegram.org/bot${token}/getUserProfilePhotos`;
 
-    async function getChatId() {
-        try {
-            const response = await fetch(getUpdatesUrl);
-            const data = await response.json();
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var warningBanner = document.querySelector("#unity-warning");
 
-            if (data.ok) {
-                const updates = data.result;
-                if (updates.length > 0) {
-                    const lastUpdate = updates[updates.length - 1];
-                    const userId = lastUpdate.message.from.id; // Lấy user_id của người dùng
-                    console.log("Data:", updates );
-                    
-                    // Gọi hàm để lấy avatar của người dùng
-                    await getUserAvatar(userId);
-                } else {
-                    console.log("Không có cập nhật mới");
-                }
-            } else {
-                console.error("Lỗi khi lấy cập nhật:", data.description);
-            }
-        } catch (error) {
-            console.error("Lỗi khi gửi yêu cầu:", error);
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
-    }
-
-    async function getUserAvatar(userId) {
-        try {
-            const response = await fetch(`${getProfilePhotosUrl}?user_id=${userId}`);
-            const data = await response.json();
-
-            if (data.ok) {
-                const photos = data.result.photos;
-                if (photos.length > 0) {
-                    const fileId = photos[photos.length - 1][0].file_id; // Lấy file_id của ảnh đại diện
-                    const fileUrl = `https://api.telegram.org/file/bot${token}/${fileId}`; // Sửa ở đây: không có URL để tải file
-                    console.log("Avatar URL:", fileUrl);
-                    document.getElementById('rank').innerText = "Avatar URL: " + fileUrl;
-                } else {
-                    console.log("Người dùng không có ảnh đại diện");
-                    document.getElementById('rank').innerText = "Người dùng không có ảnh đại diện";
-                }
-            } else {
-                console.error("Lỗi khi lấy ảnh đại diện:", data.description);
-            }
-        } catch (error) {
-            console.error("Lỗi khi gửi yêu cầu lấy avatar:", error);
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
         }
-    }
+        updateBannerVisibility();
+      }
 
-    // Gọi hàm để lấy chat_id
-    getChatId();
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/apple.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/apple.data.br",
+        frameworkUrl: buildUrl + "/apple.framework.js.br",
+        codeUrl: buildUrl + "/apple.wasm.br",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "MccGameMini",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
+
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
+
+
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+              }).then((unityInstance) => {
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+
+      document.body.appendChild(script);
+
     </script>
-
-</body>
+  </body>
 </html>
