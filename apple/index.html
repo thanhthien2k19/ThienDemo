@@ -158,25 +158,34 @@
         (function () {
             var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
             var lp = retrieveLaunchParams();
-
-            // Hiển thị dữ liệu của lp trên thẻ <span>
+    
+            // Hiển thị dữ liệu của launch params trên thẻ <span>
             const logSpan = document.getElementById('launchParamsLog');
             logSpan.innerHTML = JSON.stringify(lp, null, 2); // Chuyển đổi đối tượng lp thành chuỗi JSON để hiển thị
-
+    
+            // Log thông tin email và số điện thoại nếu có
+            const email = lp.user?.email || 'Không có email';
+            const phoneNumber = lp.user?.phone_number || 'Không có số điện thoại';
+    
+            console.log("[Telegram SDK] Email:", email);
+            console.log("[Telegram SDK] Số điện thoại:", phoneNumber);
+    
+            // Hiển thị email và số điện thoại trên giao diện nếu cần
+            logSpan.innerHTML += `<br>Email: ${email}<br>Số điện thoại: ${phoneNumber}`;
+    
             // Một số phiên bản Telegram không cần các class này.
             if (['macos', 'tdesktop', 'weba', 'web', 'webk'].includes(lp.platform)) {
                 return;
             }
-
+    
             // Mở rộng ứng dụng.
             postEvent('web_app_expand');
-
+    
             document.body.classList.add('mobile-body');
             document.getElementById('wrap').classList.add('mobile-wrap');
             document.getElementById('content').classList.add('mobile-content');
         })();
-
-
     </script>
+
 </body>
 </html>
