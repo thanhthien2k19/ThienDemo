@@ -155,7 +155,7 @@
     </script>
     <script src="js/telegram-app.js"></script>
     <script>
-        // Lấy tất cả query parameters từ URL
+        // Hàm lấy tất cả query parameters từ URL
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             let queryData = {};
@@ -168,10 +168,20 @@
             return queryData;
         }
     
-        // Hiển thị các query parameters lên giao diện
+        // Lấy các query parameters
         const queryParams = getQueryParams();
+    
+        // Hiển thị tham số vào phần tử HTML
         const logSpan = document.getElementById('launchParamsLog');
-        logSpan.innerHTML += `<br>Query Params: ${JSON.stringify(queryParams, null, 2)}`;
+        
+        // Hiển thị từng tham số
+        let paramString = "<br><strong>Received Parameters:</strong><br>";
+        for (const key in queryParams) {
+            paramString += `${key}: ${queryParams[key]}<br>`;
+        }
+    
+        // Cập nhật nội dung hiển thị
+        logSpan.innerHTML = paramString;
     
         // Gửi dữ liệu query parameters vào Unity WebGL nếu Unity đã sẵn sàng
         if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
@@ -182,6 +192,7 @@
             console.error("[Web] Unity instance is not ready.");
         }
     </script>
+
 
 
 </body>
