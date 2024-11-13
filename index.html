@@ -125,16 +125,16 @@
 
 
                 const requestDataJson = `{
-                          "avatar": "https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg",
-                          "blocked": "ACTIVATE",
-                          "date_of_birth": "2000-10-10",
-                          "first_name": "Long",
-                          "last_name": "Test",
-                          "phone_number": "+84398765432",
-                          "user_name": "LongTest",
-                          "uuid": "123456789",
-                          "referral_code": null
-                        }`;
+                              "avatar": "https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg",
+                              "blocked": "ACTIVATE",
+                              "date_of_birth": "2000-10-10",
+                              "first_name": "Long",
+                              "last_name": "Test",
+                              "phone_number": "+84398765432",
+                              "user_name": "LongTest",
+                              "uuid": "123456789",
+                              "referral_code": null
+                            }`;
 
                 // Check if the Unity instance is ready before sending the message
                 if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
@@ -157,17 +157,17 @@
     <script>
         // Kiểm tra xem có phải đang chạy trên Telegram WebApp không
         const isTelegramWebApp = window.Telegram && window.Telegram.WebApp;
-    
+
         // Hàm lấy tất cả query parameters từ URL
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             let queryData = {};
-    
+
             // Duyệt qua tất cả các tham số và lưu vào đối tượng
             params.forEach((value, key) => {
                 queryData[key] = value;
             });
-    
+
             // Nếu là Telegram WebApp, lấy thêm start_param
             if (isTelegramWebApp) {
                 const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
@@ -175,25 +175,25 @@
                     queryData['start_param'] = startParam;
                 }
             }
-    
+
             return queryData;
         }
-    
+
         // Lấy các query parameters
         const queryParams = getQueryParams();
-    
+
         // Hiển thị tham số vào phần tử HTML
         const logSpan = document.getElementById('launchParamsLog');
-        
+
         // Hiển thị từng tham số
         let paramString = "<br><strong>Received Parameters:</strong><br>";
         for (const key in queryParams) {
             paramString += `${key}: ${queryParams[key]}<br>`;
         }
-    
+
         // Cập nhật nội dung hiển thị
         logSpan.innerHTML = paramString;
-    
+
         // Gửi dữ liệu query parameters vào Unity WebGL nếu Unity đã sẵn sàng
         if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
             const queryDataJson = JSON.stringify(queryParams);
