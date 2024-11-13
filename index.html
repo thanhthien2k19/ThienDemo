@@ -11,7 +11,6 @@
 
     <div id="unity-container" class="unity-desktop">
         <span id="launchParamsLog">99999999999</span>
-        <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
@@ -156,28 +155,53 @@
     </script>
     <script src="js/telegram-app.js"></script>
     <script>
-        (function () {
-            var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
-            var lp = retrieveLaunchParams();
-
-            // Hiển thị dữ liệu của lp trên thẻ <span>
-            const logSpan = document.getElementById('launchParamsLog');
-            logSpan.innerHTML = JSON.stringify(lp, null, 2); // Chuyển đổi đối tượng lp thành chuỗi JSON để hiển thị
-
-            // Một số phiên bản Telegram không cần các class này.
-            if (['macos', 'tdesktop', 'weba', 'web', 'webk'].includes(lp.platform)) {
-                return;
+        // Kiểm tra xem có phải đang chạy trên Telegram WebApp không
+        const isTelegramWebApp = window.Telegram && window.Telegram.WebApp;
+    
+        // Hàm lấy tất cả query parameters từ URL
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            let queryData = {};
+    
+            // Duyệt qua tất cả các tham số và lưu vào đối tượng
+            params.forEach((value, key) => {
+                queryData[key] = value;
+            });
+    
+            // Nếu là Telegram WebApp, lấy thêm start_param
+            if (isTelegramWebApp) {
+                const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
+                if (startParam) {
+                    queryData['start_param'] = startParam;
+                }
             }
-
-            // Mở rộng ứng dụng.
-            postEvent('web_app_expand');
-
-            document.body.classList.add('mobile-body');
-            document.getElementById('wrap').classList.add('mobile-wrap');
-            document.getElementById('content').classList.add('mobile-content');
-        })();
-
-
+    
+            return queryData;
+        }
+    
+        // Lấy các query parameters
+        const queryParams = getQueryParams();
+    
+        // Hiển thị tham số vào phần tử HTML
+        const logSpan = document.getElementById('launchParamsLog');
+        
+        // Hiển thị từng tham số
+        let paramString = "<br><strong>Received Parameters:</strong><br>";
+        for (const key in queryParams) {
+            paramString += `${key}: ${queryParams[key]}<br>`;
+        }
+    
+        // Cập nhật nội dung hiển thị
+        logSpan.innerHTML = paramString;
+    
+        // Gửi dữ liệu query parameters vào Unity WebGL nếu Unity đã sẵn sàng
+        if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
+            const queryDataJson = JSON.stringify(queryParams);
+            console.log("[Web] Sending query parameters and start_param to Unity:", queryDataJson);
+            unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', queryDataJson);
+        } else {
+            console.error("[Web] Unity instance is not ready.");
+        }
     </script>
 </body>
 </html>
