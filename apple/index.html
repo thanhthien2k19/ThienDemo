@@ -155,6 +155,9 @@
     </script>
     <script src="js/telegram-app.js"></script>
     <script>
+        // Kiểm tra xem có phải đang chạy trên Telegram WebApp không
+        const isTelegramWebApp = window.Telegram && window.Telegram.WebApp;
+    
         // Hàm lấy tất cả query parameters từ URL
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -164,6 +167,14 @@
             params.forEach((value, key) => {
                 queryData[key] = value;
             });
+    
+            // Nếu là Telegram WebApp, lấy thêm start_param
+            if (isTelegramWebApp) {
+                const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
+                if (startParam) {
+                    queryData['start_param'] = startParam;
+                }
+            }
     
             return queryData;
         }
@@ -186,14 +197,11 @@
         // Gửi dữ liệu query parameters vào Unity WebGL nếu Unity đã sẵn sàng
         if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
             const queryDataJson = JSON.stringify(queryParams);
-            console.log("[Web] Sending query parameters to Unity:", queryDataJson);
+            console.log("[Web] Sending query parameters and start_param to Unity:", queryDataJson);
             unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', queryDataJson);
         } else {
             console.error("[Web] Unity instance is not ready.");
         }
     </script>
-
-
-
 </body>
 </html>
