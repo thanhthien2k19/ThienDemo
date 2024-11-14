@@ -125,16 +125,16 @@
 
 
                 const requestDataJson = `{
-                              "avatar": "https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg",
-                              "blocked": "ACTIVATE",
-                              "date_of_birth": "2000-10-10",
-                              "first_name": "Long",
-                              "last_name": "Test",
-                              "phone_number": "+84398765432",
-                              "user_name": "LongTest",
-                              "uuid": "123456789",
-                              "referral_code": null
-                            }`;
+                          "avatar": "https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg",
+                          "blocked": "ACTIVATE",
+                          "date_of_birth": "2000-10-10",
+                          "first_name": "Long",
+                          "last_name": "Test",
+                          "phone_number": "+84398765432",
+                          "user_name": "LongTest",
+                          "uuid": "123456789",
+                          "referral_code": null
+                        }`;
 
                 // Check if the Unity instance is ready before sending the message
                 if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
@@ -155,12 +155,28 @@
     </script>
     <script src="js/telegram-app.js"></script>
     <script>
-        var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
-        var lp = retrieveLaunchParams();
+        (function () {
+            var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
+            var lp = retrieveLaunchParams();
 
-        // Hiển thị dữ liệu của lp trên thẻ <span>
-        const logSpan = document.getElementById('launchParamsLog');
-        logSpan.innerHTML = JSON.stringify(lp, null, 2);
+            // Hiển thị dữ liệu của lp trên thẻ <span>
+            const logSpan = document.getElementById('launchParamsLog');
+            logSpan.innerHTML = JSON.stringify(lp, null, 2); // Chuyển đổi đối tượng lp thành chuỗi JSON để hiển thị
+
+            // Một số phiên bản Telegram không cần các class này.
+            if (['macos', 'tdesktop', 'weba', 'web', 'webk'].includes(lp.platform)) {
+                return;
+            }
+
+            // Mở rộng ứng dụng.
+            postEvent('web_app_expand');
+
+            document.body.classList.add('mobile-body');
+            document.getElementById('wrap').classList.add('mobile-wrap');
+            document.getElementById('content').classList.add('mobile-content');
+        })();
+
+
     </script>
 </body>
 </html>
