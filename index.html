@@ -310,22 +310,48 @@
     </script>
     <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
     <script type="application/javascript">
-
-        /*
-         * This is a demo code for Telegram WebApp for Bots
-         * It contains basic examples of how to use the API
-         * Note: all requests to backend are disabled in this demo, you should use your own backend
-         */
     
+        // Khởi tạo Telegram WebApp
         const DemoApp = {
             initDataUnsafe: Telegram.WebApp.initDataUnsafe || {},
+            
+            init() {
+                Telegram.WebApp.ready();
     
-            init(options) {
-                Telegram.WebApp.ready()
+                // Lấy `start_param` từ initDataUnsafe
+                const startParam = DemoApp.initDataUnsafe.start_param || '';
+    
+                if (startParam) {
+                    try {
+                        // Giải mã Base64
+                        const decodedData = atob(startParam);
+    
+                        // Parse chuỗi JSON
+                        const parsedData = JSON.parse(decodedData);
+    
+                        // Hiển thị kết quả trên màn hình
+                        console.log("[Web] Decoded Data:", decodedData);
+                        console.log("[Web] Parsed Data:", parsedData);
+    
+                        // Hiển thị trên trang web
+                        document.getElementById('launchParamsLog').innerHTML = `
+                            <pre>Decoded Data: ${decodedData}</pre>
+                            <pre>Parsed Data: ${JSON.stringify(parsedData, null, 2)}</pre>
+                        `;
+                    } catch (error) {
+                        console.error("[Web] Error decoding start_param:", error);
+                        document.getElementById('launchParamsLog').innerHTML = "Error decoding start_param.";
+                    }
+                } else {
+                    console.log("[Web] start_param không tồn tại.");
+                    document.getElementById('launchParamsLog').innerHTML = "start_param không tồn tại.";
+                }
             },
         };
+    
+        // Khởi động ứng dụng
         DemoApp.init();
-        document.getElementById('launchParamsLog').innerHTML = JSON.stringify(DemoApp.initDataUnsafe, null, 2);
     </script>
+    
 </body>
 </html>
