@@ -158,25 +158,30 @@
         (function () {
             var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
             var lp = retrieveLaunchParams();
-
+        
+            // Kiểm tra nếu là Telegram WebApp
+            const isTelegramWebApp = window.Telegram && window.Telegram.WebApp;
+        
+            // Lấy tham số start_param nếu có
+            const startParam = isTelegramWebApp ? window.Telegram.WebApp.initDataUnsafe.start_param : null;
+        
+            // Nếu có start_param, thêm vào lp
+            if (startParam) {
+                lp.start_param = startParam;
+            }
+        
             // Hiển thị dữ liệu của lp trên thẻ <span>
             const logSpan = document.getElementById('launchParamsLog');
-            logSpan.innerHTML = JSON.stringify(lp, null, 2); // Chuyển đổi đối tượng lp thành chuỗi JSON để hiển thị
-
-            // Một số phiên bản Telegram không cần các class này.
-            if (['macos', 'tdesktop', 'weba', 'web', 'webk'].includes(lp.platform)) {
-                return;
+            let paramString = JSON.stringify(lp, null, 2); // Chuyển đổi đối tượng lp thành chuỗi JSON để hiển thị
+        
+            // Hiển thị tham số start_param nếu có
+            if (startParam) {
+                paramString += `<br><strong>Start Parameter:</strong> ${startParam}`;
             }
-
-            // Mở rộng ứng dụng.
-            postEvent('web_app_expand');
-
-            document.body.classList.add('mobile-body');
-            document.getElementById('wrap').classList.add('mobile-wrap');
-            document.getElementById('content').classList.add('mobile-content');
+        
+            // Cập nhật nội dung thẻ span với dữ liệu
+            logSpan.innerHTML = paramString;
         })();
-
-
     </script>
 </body>
 </html>
