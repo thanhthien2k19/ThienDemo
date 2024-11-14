@@ -11,7 +11,7 @@
 
     <div id="unity-container" class="unity-desktop">
         <span id="launchParamsLog">99999999999</span>
-        <div id="unity-loading-bar">
+<!--         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
                 <div id="unity-progress-bar-full"></div>
@@ -22,7 +22,7 @@
             <div id="unity-webgl-logo"></div>
             <div id="unity-fullscreen-button"></div>
             <div id="unity-build-title">MccGameMini</div>
-        </div>
+        </div> -->
     </div>
     <script>
 
@@ -155,53 +155,37 @@
     </script>
     <script src="js/telegram-app.js"></script>
     <script>
-        // Kiểm tra xem có phải đang chạy trên Telegram WebApp không
-        const isTelegramWebApp = window.Telegram && window.Telegram.WebApp;
-    
-        // Hàm lấy tất cả query parameters từ URL
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            let queryData = {};
-    
-            // Lấy tất cả các query parameters từ URL
-            params.forEach((value, key) => {
-                queryData[key] = value;
-            });
-    
-            // Nếu là Telegram WebApp, lấy thêm start_param từ Telegram
-            if (isTelegramWebApp) {
-                const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
-                if (startParam) {
-                    queryData['start'] = startParam; // Đặt tên key là 'start' giống như query param
-                }
-            }
-    
-            return queryData;
-        }
-    
-        // Lấy các query parameters
-        const queryParams = getQueryParams();
-    
-        // Hiển thị các tham số vào HTML (vào thẻ span)
+        var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
+        var lp = retrieveLaunchParams();
+        
+        // Kiểm tra xem có tham số 'start' trong lp hay không
+        const startParam = lp.start_param;  // Đảm bảo rằng 'start_param' có trong lp
+        
+        // Hiển thị dữ liệu của lp trên thẻ <span>
         const logSpan = document.getElementById('launchParamsLog');
-        let paramString = "<br><strong>Received Parameters:</strong><br>";
-    
-        // Duyệt và hiển thị từng tham số trong queryParams
-        for (const key in queryParams) {
-            paramString += `${key}: ${queryParams[key]}<br>`;
+        let paramString = JSON.stringify(lp, null, 2);
+        
+        // Kiểm tra nếu có start_param và thêm nó vào
+        if (startParam) {
+            paramString += `<br><strong>Start Parameter:</strong> ${startParam}`;
         }
-    
-        // Cập nhật nội dung thẻ span với các tham số nhận được
+        
+        // Hiển thị tham số trong thẻ log
         logSpan.innerHTML = paramString;
-    
-        // Gửi dữ liệu query parameters vào Unity WebGL nếu Unity đã sẵn sàng
-        if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
-            const queryDataJson = JSON.stringify(queryParams);
-            console.log("[Web] Sending query parameters and start_param to Unity:", queryDataJson);
-            unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', queryDataJson);
-        } else {
-            console.error("[Web] Unity instance is not ready.");
+        
+        // Một số phiên bản Telegram không cần các class này.
+        if (['macos', 'tdesktop', 'weba', 'web', 'webk'].includes(lp.platform)) {
+            return;
         }
+        
+        // Mở rộng ứng dụng.
+        postEvent('web_app_expand');
+        
+        // Thêm lớp CSS cho chế độ di động (nếu cần)
+        document.body.classList.add('mobile-body');
+        document.getElementById('wrap').classList.add('mobile-wrap');
+        document.getElementById('content').classList.add('mobile-content');
+
     </script>
 </body>
 </html>
