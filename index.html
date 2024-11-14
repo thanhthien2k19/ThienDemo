@@ -20,6 +20,10 @@
     </script>
     <title></title>
 </head>
+
+<body class="" style="visibility: hidden;">
+
+
 <section>
     <pre><code id="webview_data"></code></pre>
     <div class="hint">
@@ -44,17 +48,10 @@
         SettingsButton: Telegram.WebApp.SettingsButton,
 
         init(options) {
-            document.body.style.visibility = ''
             Telegram.WebApp.ready()
             Telegram.WebApp.MainButton.setParams({
                 text      : 'CLOSE WEBVIEW',
                 is_visible: true
-            }).onClick(DemoApp.close)
-            Telegram.WebApp.BackButton.onClick(function() {
-                DemoApp.showAlert('Back button pressed')
-            })
-            Telegram.WebApp.SettingsButton.onClick(function() {
-                DemoApp.showAlert('Settings opened!')
             })
         },
         checkInitData() {
@@ -75,46 +72,34 @@
                 });
             }
         },
-        showPopup() {
-            Telegram.WebApp.showPopup({
-                title  : 'Popup title',
-                message: 'Popup message',
-                buttons: [
-                    {id: 'delete', type: 'destructive', text: 'Delete all'},
-                    {id: 'faq', type: 'default', text: 'Open FAQ'},
-                    {type: 'cancel'},
-                ]
-            }, function (buttonId) {
-                if (buttonId === 'delete') {
-                    DemoApp.showAlert("'Delete all' selected");
-                } else if (buttonId === 'faq') {
-                    Telegram.WebApp.openLink('https://telegram.org/faq');
-                }
-            });
-        },
-        showScanQrPopup: function (linksOnly) {
-            Telegram.WebApp.showScanQrPopup({
-                text: linksOnly ? 'with any link' : 'for test purposes'
-            }, function (text) {
-                if (linksOnly) {
-                    const lowerText = text.toString().toLowerCase();
-                    if (lowerText.substring(0, 7) === 'http://' ||
-                        lowerText.substring(0, 8) === 'https://'
-                    ) {
-                        setTimeout(function () {
-                            Telegram.WebApp.openLink(text);
-                        }, 50);
+        // Other
+        apiRequest(method, data, onCallback) {
+            // DISABLE BACKEND FOR FRONTEND DEMO
+            // YOU CAN USE YOUR OWN REQUESTS TO YOUR OWN BACKEND
+            // CHANGE THIS CODE TO YOUR OWN
+            return onCallback && onCallback({error: 'This function (' + method + ') should send requests to your backend. Please, change this code to your own.'});
 
-                        return true;
-                    }
-                } else {
-                    DemoApp.showAlert(text);
-
-                    return true;
+            const authData = DemoApp.initData || '';
+            fetch('/demo/api', {
+                method     : 'POST',
+                body       : JSON.stringify(Object.assign(data, {
+                    _auth : authData,
+                    method: method,
+                })),
+                credentials: 'include',
+                headers    : {
+                    'Content-Type': 'application/json'
                 }
+            }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                onCallback && onCallback(result);
+            }).catch(function (error) {
+                onCallback && onCallback({error: 'Server error'});
             });
-        },
+        }
     }
+
     const DemoAppInitData = {
         init() {
             DemoApp.init();
@@ -122,7 +107,16 @@
             DemoApp.checkInitData();
         }
     };
-    DemoAppInitData.init();
+</script>
+
+<script type="application/javascript">
+    /*
+     * This part of code is used to initialize the demo app and set up the event handlers we need.
+     */
+    document.getElementById('webview_data').innerHTML         = JSON.stringify(DemoApp.initDataUnsafe, null, 2);
+
+    DemoApp.checkInitData();
+    DemoApp.init();
 </script>
 
 </body>
