@@ -137,15 +137,17 @@
                 //     document.makeFullscreen('unity-container');
                 // };
 
-                const startParam = DemoApp.initDataUnsafe.start_param || '';
-                if (startParam) {
+                // const startParam = DemoApp.initDataUnsafe.start_param || '';
+                console.log(DemoApp.initDataUnsafe);
 
-                    const decodedData = atob(startParam);
+                // if (startParam) {
 
-                    const parsedData = JSON.parse(decodedData);
+                //     const decodedData = atob(startParam);
 
-                    console.log(parsedData);
-                }
+                //     const parsedData = JSON.parse(decodedData);
+
+                //     console.log(parsedData);
+                // }
 
                 const userData = Telegram.WebApp.initDataUnsafe.user || {};
                 console.log(9999999);
