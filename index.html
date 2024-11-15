@@ -137,6 +137,16 @@
                 //     document.makeFullscreen('unity-container');
                 // };
 
+                const startParam = DemoApp.initDataUnsafe.start_param || '';
+                if (startParam) {
+
+                    const decodedData = atob(startParam);
+
+                    const parsedData = JSON.parse(decodedData);
+
+                    console.log(parsedData);
+                }
+
                 const userData = Telegram.WebApp.initDataUnsafe.user || {};
                 console.log(9999999);
                 console.log(userData);
@@ -156,6 +166,8 @@
                     console.log("[Web] Sending login data to Unity:", requestDataJson);
                     // Call the method in Unity's AppManager
                     unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', requestDataJson);
+                    
+                    unityInstance.SendMessage('AppManager', 'LinkAccount', "testthoi@mail.com");
                 } else {
                     console.error("[Web] Unity instance is not ready.");
                 }
