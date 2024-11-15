@@ -162,6 +162,8 @@
 
             init() {
                 Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+
 
                 // Lấy `start_param` từ initDataUnsafe
                 const startParam = DemoApp.initDataUnsafe.start_param || '';
