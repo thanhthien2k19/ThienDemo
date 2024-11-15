@@ -136,10 +136,8 @@
                 // fullscreenButton.onclick = () => {
                 //     document.makeFullscreen('unity-container');
                 // };
-                console.log(9999999);
-                console.log(Telegram.WebApp.initDataUnsafe);
                 const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
-                console.log(startParam);
+                const accountEmail = "";
 
                 if (startParam) {
 
@@ -148,6 +146,8 @@
                     const parsedData = JSON.parse(decodedData);
 
                     console.log(parsedData);
+
+                    accountEmail = parsedData.accountEmail || "unknown@mail.com";
                 }
 
                 const userData = Telegram.WebApp.initDataUnsafe.user || {};
@@ -168,7 +168,7 @@
                     // Call the method in Unity's AppManager
                     unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', requestDataJson);
                     
-                    unityInstance.SendMessage('AppManager', 'LinkAccount', "testthoi@mail.com");
+                    unityInstance.SendMessage('AppManager', 'LinkAccount', accountEmail);
                 } else {
                     console.error("[Web] Unity instance is not ready.");
                 }
