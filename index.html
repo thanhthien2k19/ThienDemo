@@ -164,46 +164,46 @@
                 Telegram.WebApp.ready();
                 Telegram.WebApp.disableVerticalSwipes()
 
-                // Lấy `start_param` từ initDataUnsafe
-                const startParam = DemoApp.initDataUnsafe.start_param || '';
+                // // Lấy `start_param` từ initDataUnsafe
+                // const startParam = DemoApp.initDataUnsafe.start_param || '';
 
-                if (startParam) {
-                    try {
-                        // Giải mã Base64
-                        const decodedData = atob(startParam);
+                // if (startParam) {
+                //     try {
+                //         // Giải mã Base64
+                //         const decodedData = atob(startParam);
 
-                        // Parse chuỗi JSON
-                        const parsedData = JSON.parse(decodedData);
+                //         // Parse chuỗi JSON
+                //         const parsedData = JSON.parse(decodedData);
 
-                        // Hiển thị kết quả trên màn hình
-                        console.log("[Web] Decoded Data:", decodedData);
-                        console.log("[Web] Parsed Data:", parsedData);
+                //         // Hiển thị kết quả trên màn hình
+                //         console.log("[Web] Decoded Data:", decodedData);
+                //         console.log("[Web] Parsed Data:", parsedData);
 
-                        // Hiển thị trên trang web
-                        document.getElementById('launchParamsLog').innerHTML = `
-                            <pre>Decoded Data: ${decodedData}</pre>
-                            <pre>Parsed Data: ${JSON.stringify(parsedData, null, 2)}</pre>
-                        `;
-                    } catch (error) {
-                        console.error("[Web] Error decoding start_param:", error);
-                        document.getElementById('launchParamsLog').innerHTML = "Error decoding start_param.";
-                    }
-                } else {
-                    console.log("[Web] start_param không tồn tại.");
-                    <!--document.getElementById('launchParamsLog').innerHTML = "start_param không tồn tại.";-->
-                }
+                //         // Hiển thị trên trang web
+                //         document.getElementById('launchParamsLog').innerHTML = `
+                //             <pre>Decoded Data: ${decodedData}</pre>
+                //             <pre>Parsed Data: ${JSON.stringify(parsedData, null, 2)}</pre>
+                //         `;
+                //     } catch (error) {
+                //         console.error("[Web] Error decoding start_param:", error);
+                //         document.getElementById('launchParamsLog').innerHTML = "Error decoding start_param.";
+                //     }
+                // } else {
+                //     console.log("[Web] start_param không tồn tại.");
+                //     document.getElementById('launchParamsLog').innerHTML = "start_param không tồn tại.";
+                // }
             },
         };
         DemoApp.init();
 
-        <!--// Chia sẻ thông tin qua Telegram
-        document.getElementById("btnShare").onclick = function () {
-            const shareText = "Check out this amazing game!";
-            const shareUrl = "https://t.me/Carot2024Bot";  // URL bạn muốn chia sẻ
+        // Chia sẻ thông tin qua Telegram
+        // document.getElementById("btnShare").onclick = function () {
+        //     const shareText = "Check out this amazing game!";
+        //     const shareUrl = "https://t.me/Carot2024Bot";  // URL bạn muốn chia sẻ
 
-            // Mở liên kết chia sẻ trên Telegram
-            Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
-        };-->
+        //     // Mở liên kết chia sẻ trên Telegram
+        //     Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
+        // }
     </script>
 </body>
 </html>
