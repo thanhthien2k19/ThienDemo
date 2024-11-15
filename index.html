@@ -7,28 +7,6 @@
     <title>Unity WebGL Player | MccGameMini</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <style>
-        body {
-            --bg-color: var(--tg-theme-bg-color, #fff);
-            font-family: sans-serif;
-            background-color: var(--bg-color);
-            color: var(--tg-theme-text-color, #222);
-            font-size: 14px;
-            margin: 0;
-            padding: 0;
-            color-scheme: var(--tg-color-scheme);
-        }
-        #unityContainer {
-            width: 375px;
-            height: 667px;
-            margin: 0 auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid #ccc; /* Để dễ nhận biết kích thước cửa sổ */
-        }
-    </style>
 </head>
 <body>
 
@@ -184,7 +162,7 @@
 
             init() {
                 Telegram.WebApp.ready();
-
+                Telegram.WebApp.disableVerticalSwipes()
 
                 // Lấy `start_param` từ initDataUnsafe
                 const startParam = DemoApp.initDataUnsafe.start_param || '';
