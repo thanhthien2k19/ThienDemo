@@ -25,6 +25,20 @@
             <div id="unity-build-title">MccGameMini</div>
         </div> -->
     </div>
+
+    
+    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
+    <script type="application/javascript">
+        // Khởi tạo Telegram WebApp
+        const DemoApp = {
+            init() {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.disableVerticalSwipes()
+            },
+        };
+        DemoApp.init();
+    </script>
+
     <script>
 
         var container = document.querySelector("#unity-container");
@@ -112,7 +126,6 @@
         loadingBar.style.display = "block";
 
         // This function sends JSON login data to Unity WebGL AppManager
-
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = () => {
@@ -124,18 +137,19 @@
                 //     document.makeFullscreen('unity-container');
                 // };
 
+                const userData = Telegram.WebApp.initDataUnsafe || {};
 
-                const requestDataJson = `{
-                              "avatar": "https://letsenhance.io/static/03620c83508fc72c6d2b218c7e304ba5/11499/UpscalerAfter.jpg",
-                              "blocked": "ACTIVATE",
-                              "date_of_birth": "2000-10-10",
-                              "first_name": "Long",
-                              "last_name": "Test",
-                              "phone_number": "+84398765432",
-                              "user_name": "LongTest",
-                              "uuid": "123456789",
-                              "referral_code": null
-                            }`;
+                const requestDataJson = JSON.stringify({
+                    avatar: userData.photo_url || "https://via.placeholder.com/150",
+                    blocked: "",
+                    date_of_birth: "",
+                    first_name: userData.first_name || "Unknown",
+                    last_name: userData.last_name || "Unknown",
+                    phone_number: "",
+                    user_name: userData.username || "Unknown",
+                    uuid: userData.id || "123456789",
+                    referral_code: null
+                });
 
                 // Check if the Unity instance is ready before sending the message
                 if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
@@ -153,57 +167,6 @@
         };
 
         document.body.appendChild(script);
-    </script>
-    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
-    <script type="application/javascript">
-        // Khởi tạo Telegram WebApp
-        const DemoApp = {
-            initDataUnsafe: Telegram.WebApp.initDataUnsafe || {},
-
-            init() {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.disableVerticalSwipes()
-
-                // // Lấy `start_param` từ initDataUnsafe
-                // const startParam = DemoApp.initDataUnsafe.start_param || '';
-
-                // if (startParam) {
-                //     try {
-                //         // Giải mã Base64
-                //         const decodedData = atob(startParam);
-
-                //         // Parse chuỗi JSON
-                //         const parsedData = JSON.parse(decodedData);
-
-                //         // Hiển thị kết quả trên màn hình
-                //         console.log("[Web] Decoded Data:", decodedData);
-                //         console.log("[Web] Parsed Data:", parsedData);
-
-                //         // Hiển thị trên trang web
-                //         document.getElementById('launchParamsLog').innerHTML = `
-                //             <pre>Decoded Data: ${decodedData}</pre>
-                //             <pre>Parsed Data: ${JSON.stringify(parsedData, null, 2)}</pre>
-                //         `;
-                //     } catch (error) {
-                //         console.error("[Web] Error decoding start_param:", error);
-                //         document.getElementById('launchParamsLog').innerHTML = "Error decoding start_param.";
-                //     }
-                // } else {
-                //     console.log("[Web] start_param không tồn tại.");
-                //     document.getElementById('launchParamsLog').innerHTML = "start_param không tồn tại.";
-                // }
-            },
-        };
-        DemoApp.init();
-
-        // Chia sẻ thông tin qua Telegram
-        // document.getElementById("btnShare").onclick = function () {
-        //     const shareText = "Check out this amazing game!";
-        //     const shareUrl = "https://t.me/Carot2024Bot";  // URL bạn muốn chia sẻ
-
-        //     // Mở liên kết chia sẻ trên Telegram
-        //     Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
-        // }
     </script>
 </body>
 </html>
