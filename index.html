@@ -185,12 +185,13 @@
                 console.log(Telegram.WebApp.initDataUnsafe);
 
                 const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
+                const parsedData = null;
 
                 if (startParam) {
 
                     const decodedData = atob(startParam);
 
-                    const parsedData = JSON.parse(decodedData);
+                    parsedData = JSON.parse(decodedData);
 
                     console.log(parsedData);
                 }
@@ -214,8 +215,8 @@
                     console.log("[Web] Sending login data to Unity:", requestDataJson);
                     // Call the method in Unity's AppManager
                     unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', requestDataJson);
-                    
-                    unityInstance.SendMessage('AppManager', 'LinkAccount', parsedData.accountEmail);
+                    if(parsedData)
+                        unityInstance.SendMessage('AppManager', 'LinkAccount', parsedData.accountEmail);
                 } else {
                     console.error("[Web] Unity instance is not ready.");
                 }
