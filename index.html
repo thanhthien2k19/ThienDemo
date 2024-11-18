@@ -215,7 +215,7 @@
                     console.log("[Web] Sending login data to Unity:", requestDataJson);
                     // Call the method in Unity's AppManager
                     unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', requestDataJson);
-                    if(parsedData)
+                    // if(parsedData)
                         unityInstance.SendMessage('AppManager', 'LinkAccount', "test@gmail.com");
                 } else {
                     console.error("[Web] Unity instance is not ready.");
