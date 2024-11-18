@@ -185,13 +185,12 @@
                 console.log(Telegram.WebApp.initDataUnsafe);
 
                 const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
-                const parsedData = null;
 
                 if (startParam) {
 
                     const decodedData = atob(startParam);
 
-                    parsedData = JSON.parse(decodedData);
+                    const parsedData = JSON.parse(decodedData);
 
                     console.log(parsedData);
                 }
