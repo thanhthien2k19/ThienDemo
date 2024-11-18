@@ -78,7 +78,7 @@
         const DemoApp = {
             init() {
                 Telegram.WebApp.ready();
-                Telegram.WebApp.disableVerticalSwipes()
+                Telegram.WebApp.expand()
             },
         };
         DemoApp.init();
@@ -198,7 +198,6 @@
                 }
 
                 const userData = Telegram.WebApp.initDataUnsafe.user || {};
-                console.log(9999999);
                 console.log(userData);
                 const requestDataJson = JSON.stringify({
                     avatar: userData.photo_url || "https://via.placeholder.com/150",
