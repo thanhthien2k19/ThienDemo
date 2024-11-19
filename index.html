@@ -79,6 +79,9 @@
             init() {
                 Telegram.WebApp.ready();
                 Telegram.WebApp.expand()
+                if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    Telegram.WebApp.viewportHeight = 920;
+                }
             },
         };
         DemoApp.init();
