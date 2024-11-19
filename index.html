@@ -8,7 +8,7 @@
         html, body {
             margin: 0;
             padding: 0;
-            height: 920px;
+            height: 100%;
             overflow: hidden;
         }
 
@@ -79,8 +79,6 @@
             init() {
                 Telegram.WebApp.ready();
                 Telegram.WebApp.expand()
-                Telegram.WebApp.viewportHeight = 920;
-                Telegram.WebApp.viewportStableHeight = 920;
             },
         };
         DemoApp.init();
