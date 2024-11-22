@@ -89,6 +89,24 @@
             Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
         }
 
+        function copyToClipboard(link) {
+            // Tạo một phần tử input để chứa nội dung
+            const tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = link;
+
+            // Sao chép nội dung vào clipboard
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // Cho trình duyệt cũ
+            document.execCommand("copy");
+
+            // Xóa phần tử tạm
+            document.body.removeChild(tempInput);
+
+            // Hiển thị thông báo trên console
+            console.log("Link copied to clipboard: " + link);
+        }
+
     </script>
 
     <script>
