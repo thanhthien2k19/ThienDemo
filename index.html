@@ -82,6 +82,13 @@
             },
         };
         DemoApp.init();
+
+        function shareOnTelegram(shareUrl) {
+            const shareText = "Check out this amazing game!";
+
+            Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
+        }
+
     </script>
 
     <script>
@@ -218,7 +225,7 @@
                     referral_code: null,
                     // is_premium: isPremium 
                 });
-                
+
                 // Check if the Unity instance is ready before sending the message
                 if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
                     console.log("[Web] Sending login data to Unity:", requestDataJson);
