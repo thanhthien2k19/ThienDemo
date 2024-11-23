@@ -90,21 +90,7 @@
         }
 
         function copyToClipboard(link) {
-            // Tạo một phần tử input để chứa nội dung
-            const tempInput = document.createElement("input");
-            document.body.appendChild(tempInput);
-            tempInput.value = link;
-
-            // Sao chép nội dung vào clipboard
-            tempInput.select();
-            tempInput.setSelectionRange(0, 99999); // Cho trình duyệt cũ
-            document.execCommand("copy");
-
-            // Xóa phần tử tạm
-            document.body.removeChild(tempInput);
-
-            // Hiển thị thông báo trên console
-            console.log("Link copied to clipboard: " + link);
+            navigator.clipboard.writeText(link);
         }
 
     </script>
@@ -211,17 +197,22 @@
 
                 const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
                 console.log(startParam);
-
+                
+                let referralCode = null;
 
                 if (startParam) {
+                    if (startParam.startsWith('SHARE_')) {
+                        referralCode = startParam.replace('SHARE_', ''); // Loại bỏ "SHARE_"
+                        console.log("Referral Code:", referralCode);
+                    }else{
+                        const decodedData = atob(startParam);
 
-                    const decodedData = atob(startParam);
+                        const parsedData = JSON.parse(decodedData);
 
-                    const parsedData = JSON.parse(decodedData);
-
-                    console.log(parsedData);
-                    
-                    unityInstance.SendMessage('AppManager', 'LinkAccount', parsedData.accountEmail);
+                        console.log(parsedData);
+                        
+                        unityInstance.SendMessage('AppManager', 'LinkAccount', parsedData.accountEmail);
+                    }
                 }
 
                 const userData = Telegram.WebApp.initDataUnsafe.user || {};
@@ -240,7 +231,7 @@
                     phone_number: null,
                     user_name: userData.username || "Unknown",
                     uuid: userData.id || "123456789",
-                    referral_code: null,
+                    referral_code: referralCode,
                     // is_premium: isPremium 
                 });
 
