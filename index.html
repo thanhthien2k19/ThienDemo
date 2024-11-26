@@ -226,14 +226,14 @@
                 console.log("Is Premium:", isPremium);
 
                 const requestDataJson = JSON.stringify({
-                    avatar: userData.photo_url || "https://via.placeholder.com/150",
-                    blocked: "ACTIVATE",
-                    date_of_birth: null,
+                    uuid: userData.id || "123456789",
+                    user_name: userData.username || "Unknown",
                     first_name: userData.first_name || "Unknown",
                     last_name: userData.last_name || "Unknown",
+                    date_of_birth: null,
                     phone_number: null,
-                    user_name: userData.username || "Unknown",
-                    uuid: userData.id || "123456789",
+                    avatar: userData.photo_url || "https://via.placeholder.com/150",
+                    blocked: "ACTIVATE",
                     referral_code: referralCode,
                     is_premium: isPremium
                 });
