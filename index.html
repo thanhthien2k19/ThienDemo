@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>Unity WebGL Player | MccGameMini</title>
     <style>
-        /* Remove default margins and paddings, and prevent scroll bars */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
+      /* Remove default margins and paddings, and prevent scroll bars */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: Arial, Helvetica, sans-serif;
+      }
 
-        /* Ensure the Unity container fills the viewport */
-        #unity-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+      /* Ensure the Unity container fills the viewport */
+      #unity-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-        /* Ensure the Unity canvas fills the container */
-        #unity-canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
+      /* Ensure the Unity canvas fills the container */
+      #unity-canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
 
-        /* Background color for the canvas */
-        canvas {
-            background: black;
-        }
+      /* Background color for the canvas */
+      canvas {
+        background: black;
+      }
 
-        /* Progress bar styling */
-        #loading-cover {
+      /* Progress bar styling */
+      /* #loading-cover {
             position: fixed;
             top: 0;
             left: 0;
@@ -57,199 +59,285 @@
             width: 0%;
             height: 100%;
             background-color: #4caf50;
-        }
-    </style>
-</head>
-<body>
+        } */
+      #loading-cover {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+      }
+      .text-loading {
+        z-index: 2;
+        margin-bottom: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #fff;
+        text-transform: uppercase;
+      }
 
+      #loading-text {
+        color: #fff;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      #unity-loading-bar {
+        position: absolute;
+        z-index: 3;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 20px;
+        background-color: #142c4c;
+        border: 7px solid #335394;
+        overflow: hidden;
+        position: relative;
+      }
+
+      #unity-progress-bar-full {
+        position: absolute;
+        z-index: 3;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        background-color: #3eeafb;
+        transition: width 0.2s ease;
+      }
+    </style>
+  </head>
+  <body>
     <div id="unity-container">
-        <canvas id="unity-canvas"></canvas>
+      <canvas id="unity-canvas"></canvas>
     </div>
     <div id="loading-cover">
-        <div id="unity-loading-bar">
-            <div id="unity-progress-bar-full"></div>
-        </div>
+      <img
+        class="bg-image"
+        src="./TemplateData/BGloading.png"
+        alt="BGloading"
+      />
+      <div class="text-loading">
+        Loading... <span id="loading-text">0%</span>
+      </div>
+
+      <div id="unity-loading-bar">
+        <div id="unity-progress-bar-full"></div>
+      </div>
     </div>
 
-    
     <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
     <script type="application/javascript">
-        // Khởi tạo Telegram WebApp
-        const DemoApp = {
-            init() {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand()
-            },
-        };
-        DemoApp.init();
+      // Khởi tạo Telegram WebApp
+      const DemoApp = {
+        init() {
+          Telegram.WebApp.ready();
+          Telegram.WebApp.expand();
+        },
+      };
+      DemoApp.init();
 
-        function shareOnTelegram(shareUrl) {
-            const shareText = "Check out this amazing game!";
+      function shareOnTelegram(shareUrl) {
+        const shareText = 'Check out this amazing game!';
 
-            Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
-        }
+        Telegram.WebApp.openLink(
+          `https://t.me/share/url?url=${encodeURIComponent(
+            shareUrl
+          )}&text=${encodeURIComponent(shareText)}`
+        );
+      }
 
-        function copyToClipboard(link) {
-            console.log(link);
-            navigator.clipboard.writeText(link)
-            .then(() => console.log('Đã sao chép thành công!'))
-            .catch(err => console.error('Lỗi khi sao chép:', err));
-        }
-
+      function copyToClipboard(link) {
+        console.log(link);
+        navigator.clipboard
+          .writeText(link)
+          .then(() => console.log('Đã sao chép thành công!'))
+          .catch((err) => console.error('Lỗi khi sao chép:', err));
+      }
     </script>
 
     <script>
+      var container = document.querySelector('#unity-container');
+      var canvas = document.querySelector('#unity-canvas');
+      var loadingCover = document.querySelector('#loading-cover');
+      var loadingBar = document.querySelector('#unity-loading-bar');
+      var progressBarFull = document.querySelector('#unity-progress-bar-full');
+      var loadingText = document.querySelector('#loading-text');
 
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingCover = document.querySelector("#loading-cover");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector("#unity-progress-bar-full");
-        // var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-        // var warningBanner = document.querySelector("#unity-warning");
+      // var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      // var warningBanner = document.querySelector("#unity-warning");
 
-        // Shows a temporary message banner/ribbon for a few seconds, or
-        // a permanent error message on top of the canvas if type=='error'.
-        // If type=='warning', a yellow highlight color is used.
-        // Modify or remove this function to customize the visually presented
-        // way that non-critical warnings and error messages are presented to the
-        // user.
-        function unityShowBanner(msg, type) {
-            // function updateBannerVisibility() {
-            //     warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-            // }
-            // var div = document.createElement('div');
-            // div.innerHTML = msg;
-            // warningBanner.appendChild(div);
-            // if (type == 'error') div.style = 'background: red; padding: 10px;';
-            // else {
-            //     if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-            //     setTimeout(function () {
-            //         warningBanner.removeChild(div);
-            //         updateBannerVisibility();
-            //     }, 5000);
-            // }
-            // updateBannerVisibility();
-        }
-
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/Telegram.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/Telegram.data",
-            frameworkUrl: buildUrl + "/Telegram.framework.js",
-            codeUrl: buildUrl + "/Telegram.wasm",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "MccGameMini",
-            productVersion: "1.0",
-            showBanner: unityShowBanner,
-        };
-
-        // By default, Unity keeps WebGL canvas render target size matched with
-        // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-        // Set this to false if you want to decouple this synchronization from
-        // happening inside the engine, and you would instead like to size up
-        // the canvas DOM size and WebGL render target sizes yourself.
-        // config.matchWebGLToCanvasSize = false;
-
-        // If you would like all file writes inside Unity Application.persistentDataPath
-        // directory to automatically persist so that the contents are remembered when
-        // the user revisits the site the next time, uncomment the following line:
-        // config.autoSyncPersistentDataPath = true;
-        // This autosyncing is currently not the default behavior to avoid regressing
-        // existing user projects that might rely on the earlier manual
-        // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-        // expected to change.
-
-        // if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        //     // Mobile device style: fill the whole browser client area with the game canvas:
-
-        //     var meta = document.createElement('meta');
-        //     meta.name = 'viewport';
-        //     meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        //     document.getElementsByTagName('head')[0].appendChild(meta);
-        //     container.className = "unity-mobile";
-        //     canvas.className = "unity-mobile";
-
-        //     // To lower canvas resolution on mobile devices to gain some
-        //     // performance, uncomment the following line:
-        //     // config.devicePixelRatio = 1;
-
-
-        // } else {
-        //     // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-        //     canvas.style.width = "375px";
-        //     canvas.style.height = "667px";
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        // function updateBannerVisibility() {
+        //     warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         // }
+        // var div = document.createElement('div');
+        // div.innerHTML = msg;
+        // warningBanner.appendChild(div);
+        // if (type == 'error') div.style = 'background: red; padding: 10px;';
+        // else {
+        //     if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+        //     setTimeout(function () {
+        //         warningBanner.removeChild(div);
+        //         updateBannerVisibility();
+        //     }, 5000);
+        // }
+        // updateBannerVisibility();
+      }
 
-        loadingCover.style.display = "block";
+      var buildUrl = 'Build';
+      var loaderUrl = buildUrl + '/Telegram.loader.js';
+      var config = {
+        dataUrl: buildUrl + '/Telegram.data',
+        frameworkUrl: buildUrl + '/Telegram.framework.js',
+        codeUrl: buildUrl + '/Telegram.wasm',
+        streamingAssetsUrl: 'StreamingAssets',
+        companyName: 'DefaultCompany',
+        productName: 'MccGameMini',
+        productVersion: '1.0',
+        showBanner: unityShowBanner,
+      };
 
-        // This function sends JSON login data to Unity WebGL AppManager
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                loadingCover.style.display = "none";
-                // fullscreenButton.onclick = () => {
-                //     document.makeFullscreen('unity-container');
-                // };
-                console.log(Telegram.WebApp.initDataUnsafe);
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
 
-                const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
-                console.log(startParam);
-                
-                let referralCode = null;
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
 
-                if (startParam) {
-                    if (startParam.startsWith('SHARE_')) {
-                        referralCode = startParam.replace('SHARE_', ''); // Loại bỏ "SHARE_"
-                        console.log("Referral Code:", referralCode);
-                    }else{
-                        const decodedData = atob(startParam);
+      // if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      //     // Mobile device style: fill the whole browser client area with the game canvas:
 
-                        const parsedData = JSON.parse(decodedData);
+      //     var meta = document.createElement('meta');
+      //     meta.name = 'viewport';
+      //     meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+      //     document.getElementsByTagName('head')[0].appendChild(meta);
+      //     container.className = "unity-mobile";
+      //     canvas.className = "unity-mobile";
 
-                        console.log(parsedData);
-                        
-                        unityInstance.SendMessage('AppManager', 'LinkAccount', parsedData.accountEmail);
-                    }
-                }
+      //     // To lower canvas resolution on mobile devices to gain some
+      //     // performance, uncomment the following line:
+      //     // config.devicePixelRatio = 1;
 
-                const userData = Telegram.WebApp.initDataUnsafe.user || {};
-                console.log(userData);
+      // } else {
+      //     // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
-                const requestDataJson = JSON.stringify({
-                    uuid: userData.id || "123456789",
-                    user_name: userData.username || "Unknown",
-                    first_name: userData.first_name || "Unknown",
-                    last_name: userData.last_name || "Unknown",
-                    date_of_birth: null,
-                    phone_number: null,
-                    avatar: userData.photo_url || "https://via.placeholder.com/150",
-                    blocked: "ACTIVATE",
-                    referral_code: referralCode,
-                    is_premium: userData.is_premium || false,
-                });
+      //     canvas.style.width = "375px";
+      //     canvas.style.height = "667px";
+      // }
 
-                // Check if the Unity instance is ready before sending the message
-                if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
-                    console.log("[Web] Sending login data to Unity:", requestDataJson);
-                    // Call the method in Unity's AppManager
-                    unityInstance.SendMessage('AppManager', 'ReceiveJsonDataFromWeb', requestDataJson);
-                } else {
-                    console.error("[Web] Unity instance is not ready.");
-                }
+      loadingCover.style.display = 'block';
 
+      // This function sends JSON login data to Unity WebGL AppManager
+      var script = document.createElement('script');
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          // progressBarFull.style.width = 100 * progress + '%';
+          // loadingText.textContent = Math.round(100 * progress) + '%';
 
-            }).catch((message) => {
-                alert(message);
+          const percent = Math.round(100 * progress);
+          progressBarFull.style.width = percent + '%'; // Cập nhật chiều rộng của progress bar
+          loadingText.textContent = percent + '%'; // Hiển thị phần trăm
+        })
+          .then((unityInstance) => {
+            loadingCover.style.display = 'none';
+            // fullscreenButton.onclick = () => {
+            //     document.makeFullscreen('unity-container');
+            // };
+            console.log(Telegram.WebApp.initDataUnsafe);
+
+            const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
+            console.log(startParam);
+
+            let referralCode = null;
+
+            if (startParam) {
+              if (startParam.startsWith('SHARE_')) {
+                referralCode = startParam.replace('SHARE_', ''); // Loại bỏ "SHARE_"
+                console.log('Referral Code:', referralCode);
+              } else {
+                const decodedData = atob(startParam);
+
+                const parsedData = JSON.parse(decodedData);
+
+                console.log(parsedData);
+
+                unityInstance.SendMessage(
+                  'AppManager',
+                  'LinkAccount',
+                  parsedData.accountEmail
+                );
+              }
+            }
+
+            const userData = Telegram.WebApp.initDataUnsafe.user || {};
+            console.log(userData);
+
+            const requestDataJson = JSON.stringify({
+              uuid: userData.id || '123456789',
+              user_name: userData.username || 'Unknown',
+              first_name: userData.first_name || 'Unknown',
+              last_name: userData.last_name || 'Unknown',
+              date_of_birth: null,
+              phone_number: null,
+              avatar: userData.photo_url || 'https://via.placeholder.com/150',
+              blocked: 'ACTIVATE',
+              referral_code: referralCode,
+              is_premium: userData.is_premium || false,
             });
-        };
 
-        document.body.appendChild(script);
+            // Check if the Unity instance is ready before sending the message
+            if (typeof unityInstance !== 'undefined' && unityInstance.Module) {
+              console.log(
+                '[Web] Sending login data to Unity:',
+                requestDataJson
+              );
+              // Call the method in Unity's AppManager
+              unityInstance.SendMessage(
+                'AppManager',
+                'ReceiveJsonDataFromWeb',
+                requestDataJson
+              );
+            } else {
+              console.error('[Web] Unity instance is not ready.');
+            }
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      };
+
+      document.body.appendChild(script);
     </script>
-</body>
+  </body>
 </html>
