@@ -231,7 +231,7 @@
                     avatar: userData.photo_url || "https://via.placeholder.com/150",
                     blocked: "ACTIVATE",
                     referral_code: referralCode,
-                    is_premium: userData.is_premium || null,
+                    is_premium: userData.is_premium || false,
                 });
 
                 // Check if the Unity instance is ready before sending the message
