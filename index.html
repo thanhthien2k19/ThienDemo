@@ -221,10 +221,6 @@
                 const userData = Telegram.WebApp.initDataUnsafe.user || {};
                 console.log(userData);
 
-                // Kiểm tra trạng thái Premium
-                const isPremium = userData.photo_url && userData.photo_url.endsWith(".gif");
-                console.log("Is Premium:", isPremium);
-
                 const requestDataJson = JSON.stringify({
                     uuid: userData.id || "123456789",
                     user_name: userData.username || "Unknown",
@@ -235,7 +231,7 @@
                     avatar: userData.photo_url || "https://via.placeholder.com/150",
                     blocked: "ACTIVATE",
                     referral_code: referralCode,
-                    is_premium: isPremium
+                    is_premium: userData.is_premium || null,
                 });
 
                 // Check if the Unity instance is ready before sending the message
