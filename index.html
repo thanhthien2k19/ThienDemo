@@ -117,11 +117,6 @@
     <script src="js/telegram-web-app.js"></script>
     <script src="js/telegram-app.js"></script>
     <script type="application/javascript">
-
-      var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
-      var lp = retrieveLaunchParams();
-      console.log("retrieveLaunchParams");
-      console.log(lp);
       // Khởi tạo Telegram WebApp
       const DemoApp = {
         init() {
@@ -259,6 +254,12 @@
             const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
             console.log(startParam);
 
+            
+            var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
+            var lp = retrieveLaunchParams();
+            console.log("retrieveLaunchParams");
+            console.log(lp);
+            
             let referralCode = null;
 
             if (startParam) {
