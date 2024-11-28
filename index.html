@@ -114,8 +114,14 @@
       </div>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
+    <script src="js/telegram-web-app.js"></script>
+    <script src="js/telegram-app.js"></script>
     <script type="application/javascript">
+
+      var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
+      var lp = retrieveLaunchParams();
+      console.log("retrieveLaunchParams");
+      console.log(lp);
       // Khởi tạo Telegram WebApp
       const DemoApp = {
         init() {
