@@ -257,54 +257,47 @@
       loadingCover.style.display = 'flex';
 
       const botToken = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8';
-      const CryptoJS = window.CryptoJS; // Đảm bảo rằng crypto-js đã được tải trong trình duyệt
+      const CryptoJS = window.CryptoJS;
 
       function validateInitData(lp) {
-          const initData = lp.initData;
-          const { hash } = initData;
+          const { initData, initDataRaw } = lp;
+          const { hash, authDate } = initData;
 
-          // Step 1: Recreate initDataRaw without the hash
-          const urlParams = new URLSearchParams();
-          for (const key in initData) {
-              if (key !== 'hash' && initData[key] !== undefined) {
-                  const value = 
-                      key === 'user' ? JSON.stringify(initData[key]) : initData[key];
-                  urlParams.append(key, value);
-              }
+          if (!hash || !initDataRaw) {
+              console.error('Missing required data');
+              return false;
           }
 
-          // Sort pairs alphabetically
-          urlParams.sort();
-          const joinedPairs = Array.from(urlParams.entries())
-              .map(([key, value]) => `${key}=${value}`)
-              .join('\n');
-
-          // Step 2: Create HMAC-SHA256 using "WebAppData" and bot token
+          // Step 1: Create the first HMAC using the botToken and "WebAppData"
           const secret = CryptoJS.HmacSHA256(botToken, 'WebAppData').toString(CryptoJS.enc.Hex);
 
-          // Step 3: Create HMAC-SHA256 using the secret and joined pairs
-          const calculatedHash = CryptoJS.HmacSHA256(joinedPairs, secret).toString(CryptoJS.enc.Hex);
+          // Step 2: Create the second HMAC using the secret and initDataRaw
+          const calculatedHash = CryptoJS.HmacSHA256(initDataRaw, secret).toString(CryptoJS.enc.Hex);
 
-          // Step 4: Compare the calculated hash with the received hash
-          if (calculatedHash === hash) {
-              console.log('Init data is trusted.');
-          } else {
-              console.log('Init data is NOT trusted.');
+          // Step 3: Compare calculatedHash with the received hash
+          if (calculatedHash !== hash) {
+              console.error('Init data is NOT trusted.');
               console.log('Calculated hash:', calculatedHash);
               console.log('Received hash:', hash);
+              return false;
           }
 
-          // Optional: Validate expiration date using "auth_date"
+          console.log('Init data is trusted.');
+
+          // Step 4: Validate expiration date using "auth_date"
           const currentTime = Math.floor(Date.now() / 1000);
-          const authDate = parseInt(initData.auth_date, 10);
+          const authDateUnix = parseInt(authDate, 10);
           const expirationTime = 60 * 60; // 1 hour
 
-          if (currentTime - authDate > expirationTime) {
-              console.log('Init data has expired.');
-          } else {
-              console.log('Init data is valid within the time limit.');
+          if (currentTime - authDateUnix > expirationTime) {
+              console.error('Init data has expired.');
+              return false;
           }
+
+          console.log('Init data is valid within the time limit.');
+          return true;
       }
+
 
 
 
