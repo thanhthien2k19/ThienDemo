@@ -116,6 +116,8 @@
 
     <script src="js/telegram-web-app.js"></script>
     <script src="js/telegram-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
     <script type="application/javascript">
       // Khởi tạo Telegram WebApp
       const DemoApp = {
@@ -254,7 +256,7 @@
 
       loadingCover.style.display = 'flex';
 
-      const botToken = '5768337691:AAGDAe6rjxu1cUgxK4BizYi--Utc3J9v5AU';
+      const botToken = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8';
 
       // Function to validate init data
       function validateInitData(lp) {
@@ -282,14 +284,10 @@
           const joinedPairs = sortedPairs.join('\n');
 
           // Step 2: Create HMAC-SHA256 using "WebAppData" and bot token
-          const firstHmac = crypto.createHmac('sha256', 'WebAppData')
-              .update(botToken)
-              .digest('hex');
+          const firstHmac = CryptoJS.HmacSHA256(botToken, "WebAppData").toString(CryptoJS.enc.Hex);
 
           // Step 3: Create HMAC-SHA256 using the first HMAC result and joined pairs
-          const secondHmac = crypto.createHmac('sha256', firstHmac)
-              .update(joinedPairs)
-              .digest('hex');
+          const secondHmac = CryptoJS.HmacSHA256(joinedPairs, firstHmac).toString(CryptoJS.enc.Hex);
 
           // Step 4: Compare the calculated hash with the received hash
           if (secondHmac === hash) {
@@ -309,6 +307,7 @@
               console.log('Init data is valid within the time limit.');
           }
       }
+
 
       // This function sends JSON login data to Unity WebGL AppManager
       var script = document.createElement('script');
