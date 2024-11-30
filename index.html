@@ -257,10 +257,10 @@
       loadingCover.style.display = 'flex';
 
       const botToken = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8';
+      const CryptoJS = window.CryptoJS;  // Đảm bảo rằng crypto-js đã được tải trong trình duyệt
 
       // Function to validate init data
       function validateInitData(lp) {
-          // Extract necessary fields
           const { initData } = lp;
           const { hash, user, chatInstance, startParam, authDate } = initData;
 
@@ -294,6 +294,8 @@
               console.log('Init data is trusted.');
           } else {
               console.log('Init data is NOT trusted.');
+              console.log('Calculated hash:', secondHmac);
+              console.log('Received hash:', hash);
           }
 
           // Optional: Validate expiration date using "auth_date"
@@ -307,6 +309,7 @@
               console.log('Init data is valid within the time limit.');
           }
       }
+
 
 
       // This function sends JSON login data to Unity WebGL AppManager
