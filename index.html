@@ -257,58 +257,55 @@
       loadingCover.style.display = 'flex';
 
       const botToken = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8';
-      const CryptoJS = window.CryptoJS;  // Đảm bảo rằng crypto-js đã được tải trong trình duyệt
+      const CryptoJS = window.CryptoJS; // Đảm bảo rằng crypto-js đã được tải trong trình duyệt
 
-      // Function to validate init data
       function validateInitData(lp) {
-          const { initData } = lp;
-          const { hash, user, chatInstance, startParam, authDate } = initData;
+          const initData = lp.initData;
+          const { hash } = initData;
 
           // Step 1: Recreate initDataRaw without the hash
-          const initDataPairs = [];
-          if (user) {
-              initDataPairs.push(`user=${encodeURIComponent(JSON.stringify(user))}`);
-          }
-          if (chatInstance) {
-              initDataPairs.push(`chat_instance=${chatInstance}`);
-          }
-          if (startParam) {
-              initDataPairs.push(`start_param=${startParam}`);
-          }
-          if (authDate) {
-              initDataPairs.push(`auth_date=${Math.floor(new Date(authDate).getTime() / 1000)}`);
+          const urlParams = new URLSearchParams();
+          for (const key in initData) {
+              if (key !== 'hash' && initData[key] !== undefined) {
+                  const value = 
+                      key === 'user' ? JSON.stringify(initData[key]) : initData[key];
+                  urlParams.append(key, value);
+              }
           }
 
           // Sort pairs alphabetically
-          const sortedPairs = initDataPairs.sort();
-          const joinedPairs = sortedPairs.join('\n');
+          urlParams.sort();
+          const joinedPairs = Array.from(urlParams.entries())
+              .map(([key, value]) => `${key}=${value}`)
+              .join('\n');
 
           // Step 2: Create HMAC-SHA256 using "WebAppData" and bot token
-          const firstHmac = CryptoJS.HmacSHA256(botToken, "WebAppData").toString(CryptoJS.enc.Hex);
+          const secret = CryptoJS.HmacSHA256(botToken, 'WebAppData').toString(CryptoJS.enc.Hex);
 
-          // Step 3: Create HMAC-SHA256 using the first HMAC result and joined pairs
-          const secondHmac = CryptoJS.HmacSHA256(joinedPairs, firstHmac).toString(CryptoJS.enc.Hex);
+          // Step 3: Create HMAC-SHA256 using the secret and joined pairs
+          const calculatedHash = CryptoJS.HmacSHA256(joinedPairs, secret).toString(CryptoJS.enc.Hex);
 
           // Step 4: Compare the calculated hash with the received hash
-          if (secondHmac === hash) {
+          if (calculatedHash === hash) {
               console.log('Init data is trusted.');
           } else {
               console.log('Init data is NOT trusted.');
-              console.log('Calculated hash:', secondHmac);
+              console.log('Calculated hash:', calculatedHash);
               console.log('Received hash:', hash);
           }
 
           // Optional: Validate expiration date using "auth_date"
           const currentTime = Math.floor(Date.now() / 1000);
-          const authDateUnix = Math.floor(new Date(authDate).getTime() / 1000);
+          const authDate = parseInt(initData.auth_date, 10);
           const expirationTime = 60 * 60; // 1 hour
 
-          if (currentTime - authDateUnix > expirationTime) {
+          if (currentTime - authDate > expirationTime) {
               console.log('Init data has expired.');
           } else {
               console.log('Init data is valid within the time limit.');
           }
       }
+
 
 
 
