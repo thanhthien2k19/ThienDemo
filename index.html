@@ -116,8 +116,6 @@
 
     <script src="js/telegram-web-app.js"></script>
     <script src="js/telegram-app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
-
     <script type="application/javascript">
       // Khởi tạo Telegram WebApp
       const DemoApp = {
@@ -256,52 +254,6 @@
 
       loadingCover.style.display = 'flex';
 
-      const botToken = '7669577792:AAGdmV7Xjr0r-UGm_xMtkIc1kDItql9Wgv8';
-      const CryptoJS = window.CryptoJS;
-
-      function validateInitData(lp) {
-          const { initData, initDataRaw } = lp;
-          const { hash, authDate } = initData;
-
-          if (!hash || !initDataRaw) {
-              console.error('Missing required data');
-              return false;
-          }
-
-          // Step 1: Create the first HMAC using the botToken and "WebAppData"
-          const secret = CryptoJS.HmacSHA256(botToken, 'WebAppData').toString(CryptoJS.enc.Hex);
-
-          // Step 2: Create the second HMAC using the secret and initDataRaw
-          const calculatedHash = CryptoJS.HmacSHA256(initDataRaw, secret).toString(CryptoJS.enc.Hex);
-
-          // Step 3: Compare calculatedHash with the received hash
-          if (calculatedHash !== hash) {
-              console.error('Init data is NOT trusted.');
-              console.log('Calculated hash:', calculatedHash);
-              console.log('Received hash:', hash);
-              return false;
-          }
-
-          console.log('Init data is trusted.');
-
-          // Step 4: Validate expiration date using "auth_date"
-          const currentTime = Math.floor(Date.now() / 1000);
-          const authDateUnix = parseInt(authDate, 10);
-          const expirationTime = 60 * 60; // 1 hour
-
-          if (currentTime - authDateUnix > expirationTime) {
-              console.error('Init data has expired.');
-              return false;
-          }
-
-          console.log('Init data is valid within the time limit.');
-          return true;
-      }
-
-
-
-
-
       // This function sends JSON login data to Unity WebGL AppManager
       var script = document.createElement('script');
       script.src = loaderUrl;
@@ -327,8 +279,9 @@
             
             var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
             var lp = retrieveLaunchParams();
+            console.log("retrieveLaunchParams");
             console.log(lp);
-            validateInitData(lp);
+            
             let referralCode = null;
 
             if (startParam) {
