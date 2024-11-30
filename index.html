@@ -254,6 +254,62 @@
 
       loadingCover.style.display = 'flex';
 
+      const botToken = '5768337691:AAGDAe6rjxu1cUgxK4BizYi--Utc3J9v5AU';
+
+      // Function to validate init data
+      function validateInitData(lp) {
+          // Extract necessary fields
+          const { initData } = lp;
+          const { hash, user, chatInstance, startParam, authDate } = initData;
+
+          // Step 1: Recreate initDataRaw without the hash
+          const initDataPairs = [];
+          if (user) {
+              initDataPairs.push(`user=${encodeURIComponent(JSON.stringify(user))}`);
+          }
+          if (chatInstance) {
+              initDataPairs.push(`chat_instance=${chatInstance}`);
+          }
+          if (startParam) {
+              initDataPairs.push(`start_param=${startParam}`);
+          }
+          if (authDate) {
+              initDataPairs.push(`auth_date=${Math.floor(new Date(authDate).getTime() / 1000)}`);
+          }
+
+          // Sort pairs alphabetically
+          const sortedPairs = initDataPairs.sort();
+          const joinedPairs = sortedPairs.join('\n');
+
+          // Step 2: Create HMAC-SHA256 using "WebAppData" and bot token
+          const firstHmac = crypto.createHmac('sha256', 'WebAppData')
+              .update(botToken)
+              .digest('hex');
+
+          // Step 3: Create HMAC-SHA256 using the first HMAC result and joined pairs
+          const secondHmac = crypto.createHmac('sha256', firstHmac)
+              .update(joinedPairs)
+              .digest('hex');
+
+          // Step 4: Compare the calculated hash with the received hash
+          if (secondHmac === hash) {
+              console.log('Init data is trusted.');
+          } else {
+              console.log('Init data is NOT trusted.');
+          }
+
+          // Optional: Validate expiration date using "auth_date"
+          const currentTime = Math.floor(Date.now() / 1000);
+          const authDateUnix = Math.floor(new Date(authDate).getTime() / 1000);
+          const expirationTime = 60 * 60; // 1 hour
+
+          if (currentTime - authDateUnix > expirationTime) {
+              console.log('Init data has expired.');
+          } else {
+              console.log('Init data is valid within the time limit.');
+          }
+      }
+
       // This function sends JSON login data to Unity WebGL AppManager
       var script = document.createElement('script');
       script.src = loaderUrl;
@@ -279,9 +335,8 @@
             
             var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
             var lp = retrieveLaunchParams();
-            console.log("retrieveLaunchParams");
             console.log(lp);
-            
+            validateInitData(lp);
             let referralCode = null;
 
             if (startParam) {
