@@ -1,3 +1,10 @@
 {
-  "API_URL": "https://dev-be-metaverse.metacasinocity.io/"
+  "ENV": 2,
+  "API_URL_STG": "https://stg2-api-metaverse.metacasinocity.io/",
+  "AIRDROP_STG": "https://stg-airdrop.metacasinocity.io/en",
+  "MCC_HOMEPAGE_STG": "https://stg2-go.metacasinocity.io/",
+  "API_URL_DEV": "https://dev-be-metaverse.metacasinocity.io/",
+  "AIRDROP_DEV": "https://dev-airdrop.metacasinocity.io/en",
+  "MCC_HOMEPAGE_DEV": "https://dev-go.metacasinocity.io/",
+  "EncryptionKey": "17e512ac-nufrxtVCRMsYnSf46ff9de65"
 }

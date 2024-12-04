@@ -210,12 +210,6 @@
 
             const startParam = Telegram.WebApp.initDataUnsafe.start_param || '';
             console.log(startParam);
-
-            
-            var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
-            var lp = retrieveLaunchParams();
-            console.log("retrieveLaunchParams");
-            console.log(lp);
             
             let referralCode = null;
 
@@ -238,20 +232,15 @@
               }
             }
 
-            const userData = Telegram.WebApp.initDataUnsafe.user || {};
-            console.log(userData);
+            
+            var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
+            var lp = retrieveLaunchParams();
+            console.log("retrieveLaunchParams");
+            console.log(lp);
 
             const requestDataJson = JSON.stringify({
-              uuid: userData.id || '123456789',
-              user_name: userData.username || 'Unknown',
-              first_name: userData.first_name || 'Unknown',
-              last_name: userData.last_name || 'Unknown',
-              date_of_birth: null,
-              phone_number: null,
-              avatar: userData.photo_url || 'https://via.placeholder.com/150',
-              blocked: 'ACTIVATE',
+              init_data: lp.initDataRaw || 'Unknown',
               referral_code: referralCode,
-              is_premium: userData.is_premium || false,
             });
 
             // Check if the Unity instance is ready before sending the message
