@@ -150,21 +150,24 @@
             console.error('Lỗi khi sao chép:', err);
         }
         document.body.removeChild(textarea);
-    }
+      }
 
-    function copyToClipboard(link) {
-        if (navigator.clipboard) {
-            navigator.clipboard
-                .writeText(link)
-                .then(() => console.log('Đã sao chép thành công!'))
-                .catch((err) => {
-                    console.error('Lỗi khi sao chép:', err);
-                    fallbackCopyToClipboard(link); // Dùng cách fallback
-                });
-        } else {
-            fallbackCopyToClipboard(link);
-        }
-    }
+      function copyToClipboard(link) {
+          if (navigator.clipboard) {
+              navigator.clipboard
+                  .writeText(link)
+                  .then(() => console.log('Đã sao chép thành công!'))
+                  .catch((err) => {
+                      console.error('Lỗi khi sao chép:', err);
+                      fallbackCopyToClipboard(link); // Dùng cách fallback
+                  });
+          } else {
+              fallbackCopyToClipboard(link);
+          }
+      }
+      function reloadPage() {
+        window.location.reload();
+      }
     </script>
 
     <script>
