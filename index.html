@@ -168,6 +168,29 @@
     </script>
 
     <script>
+      // Xóa cơ sở dữ liệu IndexedDB nếu tồn tại
+      if (window.indexedDB) {
+        const dbName = "/idbfs"; // Tên cơ sở dữ liệu cần xóa
+        const deleteRequest = window.indexedDB.deleteDatabase(dbName);
+
+        deleteRequest.onsuccess = function () {
+          console.log(`Database '${dbName}' deleted successfully.`);
+        };
+
+        deleteRequest.onerror = function (event) {
+          console.error(`Failed to delete database '${dbName}':`, event.target.error);
+        };
+
+        deleteRequest.onblocked = function () {
+          console.warn(`Delete request for database '${dbName}' is blocked.`);
+        };
+      } else {
+        console.warn("IndexedDB is not supported by this browser.");
+      }
+    </script>
+
+
+    <script>
       var container = document.querySelector('#unity-container');
       var canvas = document.querySelector('#unity-canvas');
       var loadingCover = document.querySelector('#loading-cover');
@@ -178,13 +201,13 @@
       var buildUrl = 'Build';
       var loaderUrl = buildUrl + '/Telegram.loader.js';
       var config = {
-        dataUrl: buildUrl + '/Telegram.data',
-        frameworkUrl: buildUrl + '/Telegram.framework.js',
-        codeUrl: buildUrl + '/Telegram.wasm',
+        dataUrl: buildUrl + '/Telegram.data.unityweb',
+        frameworkUrl: buildUrl + '/Telegram.framework.js.unityweb',
+        codeUrl: buildUrl + '/Telegram.wasm.unityweb',
         streamingAssetsUrl: 'StreamingAssets',
         companyName: 'DefaultCompany',
         productName: 'MccGameMini',
-        productVersion: '1.0',
+        productVersion: '1.01',
       };
 
       loadingCover.style.display = 'flex';
