@@ -164,12 +164,11 @@
         } else {
             fallbackCopyToClipboard(link);
         }
-        function payment(url){
-            Telegram.WebApp.openInvoice("https://t.me/$UePA25hoAVfnAAAASxOb4oA8gTk", (status) => {
-              console("payment "+status);
-            });
+        Telegram.WebApp.openInvoice("https://t.me/$UePA25hoAVfnAAAASxOb4oA8gTk", (status) => {
+          if (status === "paid") {
+            console.log("openInvoice"+status);
           }
-        }
+        });
     </script>
 
     <script>
