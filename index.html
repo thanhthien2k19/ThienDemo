@@ -150,9 +150,9 @@
             console.error('Lỗi khi sao chép:', err);
         }
         document.body.removeChild(textarea);
-    }
+      }
 
-    function copyToClipboard(link) {
+      function copyToClipboard(link) {
         if (navigator.clipboard) {
             navigator.clipboard
                 .writeText(link)
@@ -169,6 +169,7 @@
             console.log("openInvoice"+status);
           }
         });
+      }
     </script>
 
     <script>
