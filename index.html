@@ -164,7 +164,12 @@
         } else {
             fallbackCopyToClipboard(link);
         }
-    }
+        function payment(url){
+            Telegram.WebApp.openInvoice(url, (status) => {
+              console("payment "+status);
+            });
+          }
+        }
     </script>
 
     <script>
