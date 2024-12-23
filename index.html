@@ -150,9 +150,9 @@
             console.error('Lỗi khi sao chép:', err);
         }
         document.body.removeChild(textarea);
-      }
+    }
 
-      function copyToClipboard(link) {
+    function copyToClipboard(link) {
         if (navigator.clipboard) {
             navigator.clipboard
                 .writeText(link)
@@ -164,38 +164,9 @@
         } else {
             fallbackCopyToClipboard(link);
         }
-        // Telegram.WebApp.openInvoice("https://t.me/$UePA25hoAVfnAAAASxOb4oA8gTk", (status) => {
-        //   if (status === "paid") {
-        //     console.log("openInvoice"+status);
-        //   }
-        // });
-      }
-    </script>
-
-    <script>
-      // Xóa cơ sở dữ liệu IndexedDB nếu tồn tại
-      if (window.indexedDB) {
-        const dbName = "/idbfs"; // Tên cơ sở dữ liệu cần xóa
-        const deleteRequest = window.indexedDB.deleteDatabase(dbName);
-
-        deleteRequest.onsuccess = function () {
-          console.log(`Database '${dbName}' deleted successfully.`);
-        };
-
-        deleteRequest.onerror = function (event) {
-          console.error(`Failed to delete database '${dbName}':`, event.target.error);
-        };
-
-        deleteRequest.onblocked = function () {
-          console.warn(`Delete request for database '${dbName}' is blocked.`);
-        };
-      } else {
-        console.warn("IndexedDB is not supported by this browser.");
-      }
-    </script>
+    }
 
 
-    <script>
       var container = document.querySelector('#unity-container');
       var canvas = document.querySelector('#unity-canvas');
       var loadingCover = document.querySelector('#loading-cover');
@@ -219,9 +190,11 @@
 
       // This function sends JSON login data to Unity WebGL AppManager
       var script = document.createElement('script');
+      
+      let instance = null;
       script.src = loaderUrl;
       script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
+        var instan = createUnityInstance(canvas, config, (progress) => {
           // progressBarFull.style.width = 100 * progress + '%';
           // loadingText.textContent = Math.round(100 * progress) + '%';
 
@@ -230,6 +203,7 @@
           loadingText.textContent = percent + '%'; // Hiển thị phần trăm
         })
           .then((unityInstance) => {
+            instance = unityInstance;
             loadingCover.style.display = 'none';
             // fullscreenButton.onclick = () => {
             //     document.makeFullscreen('unity-container');
@@ -283,6 +257,9 @@
                 'ReceiveJsonDataFromWeb',
                 requestDataJson
               );
+
+              instance.SendMessage("AppManager", "CallBackPaymentFromWeb", "testStatus");
+              
             } else {
               console.error('[Web] Unity instance is not ready.');
             }
@@ -291,6 +268,40 @@
             alert(message);
           });
       };
+
+      function payment(url){
+        console.log("openInvoice");
+        window.Telegram.WebApp.openInvoice(url, (status) => {
+          if (instance) {
+            console.log("payment 111"+status);
+            instance.SendMessage("AppManager", "CallBackPaymentFromWeb", status);
+          } else {
+              console.error("Unity instance is not ready.");
+          }
+        });
+      };
+
+      function handleInvoiceClosed(eventData) {
+        if (instance) {
+          instance.SendMessage("AppManager", "CallBackPaymentFromWeb", eventData.status);
+          console.log(`Payment callback sent: ${eventData.status}`);
+        } else {
+          console.log("Unity instance is not ready.");
+        }
+      }
+
+      window.addEventListener('message', ({ data }) => {
+        try {
+          const { eventType, eventData } = JSON.parse(data);
+          console.log(`Received from window: ${eventType}, ${JSON.stringify(eventData)}`);
+
+          if (eventType === "invoice_closed") {
+            handleInvoiceClosed(eventData);
+          }
+        } catch (error) {
+          console.log(`Invalid data from window: ${data}`);
+        }
+      });
 
       document.body.appendChild(script);
     </script>
