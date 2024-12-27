@@ -150,21 +150,21 @@
             console.error('Lỗi khi sao chép:', err);
         }
         document.body.removeChild(textarea);
-    }
+      }
 
-    function copyToClipboard(link) {
-        if (navigator.clipboard) {
-            navigator.clipboard
-                .writeText(link)
-                .then(() => console.log('Đã sao chép thành công!'))
-                .catch((err) => {
-                    console.error('Lỗi khi sao chép:', err);
-                    fallbackCopyToClipboard(link); // Dùng cách fallback
-                });
-        } else {
-            fallbackCopyToClipboard(link);
-        }
-    }
+      function copyToClipboard(link) {
+          if (navigator.clipboard) {
+              navigator.clipboard
+                  .writeText(link)
+                  .then(() => console.log('Đã sao chép thành công!'))
+                  .catch((err) => {
+                      console.error('Lỗi khi sao chép:', err);
+                      fallbackCopyToClipboard(link); // Dùng cách fallback
+                  });
+          } else {
+              fallbackCopyToClipboard(link);
+          }
+      }
 
 
       var container = document.querySelector('#unity-container');
@@ -237,12 +237,14 @@
             
             var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
             var lp = retrieveLaunchParams();
-            console.log("retrieveLaunchParams");
             console.log(lp);
 
             const requestDataJson = JSON.stringify({
               init_data: lp.initDataRaw || 'Unknown',
-              referral_code: referralCode,
+              ip: '',
+              platform: lp.platform || 'Unknown',
+              referral_code: referralCode || 'Unknown',
+              user_agent: navigator.userAgent || 'Unknown',
             });
 
             // Check if the Unity instance is ready before sending the message
@@ -273,7 +275,6 @@
         console.log("openInvoice");
         window.Telegram.WebApp.openInvoice(url, (status) => {
           if (instance) {
-            console.log("payment 111"+status);
             instance.SendMessage("AppManager", "CallBackPaymentFromWeb", status);
           } else {
               console.error("Unity instance is not ready.");
