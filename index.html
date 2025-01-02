@@ -217,22 +217,31 @@
 
             if (startParam) {
               if (startParam.startsWith('SHARE_')) {
-                referralCode = startParam.replace('SHARE_', ''); // Loại bỏ "SHARE_"
+                referralCode = startParam.replace('SHARE_', '');
                 console.log('Referral Code:', referralCode);
               } else {
+
+                const previousParam = sessionStorage.getItem('lastStartParam');
+
+                sessionStorage.setItem('lastStartParam', startParam);
+
                 const decodedData = atob(startParam);
 
                 const parsedData = JSON.parse(decodedData);
 
                 console.log(parsedData);
-
-                unityInstance.SendMessage(
-                  'AppManager',
-                  'LinkAccount',
-                  parsedData.accountEmail
-                );
+                if (startParam === previousParam) {
+                  console.log('Duplicate startParam detected. Skipping further actions.');
+                }else{
+                  unityInstance.SendMessage(
+                    'AppManager',
+                    'LinkAccount',
+                    parsedData.accountEmail
+                  );
+                }
               }
             }
+
 
             
             var { retrieveLaunchParams, postEvent } = window.telegramApps.sdk;
