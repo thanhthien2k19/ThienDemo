@@ -1,0 +1,57 @@
+stages:
+  - deploy
+
+deploy-develop:
+  stage: deploy
+  script:
+    - rsync -avz --delete --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_DEV_USER@$CI_DEV_IP:$CI_DEV_PATH
+    - ssh $CI_DEV_USER@$CI_DEV_IP "sudo nginx -s reload"
+
+    - aws s3 sync --cache-control 'no-cache' --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_DEV_S3_BUCKET
+
+    # - aws s3 sync --exclude '*' --include "*.svg" --no-guess-mime-type --content-type "image/svg+xml" --cache-control 'max-age=804600' . $CI_DEV_S3_BUCKET --delete
+    # - aws s3 sync --cache-control 'max-age=804600' --exclude "*.svg" --exclude index.html --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_DEV_S3_BUCKET --delete
+    # - aws s3 sync --cache-control 'no-cache' --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_DEV_S3_BUCKET
+    - aws configure set preview.cloudfront true
+    - aws cloudfront create-invalidation --distribution-id $CI_DEV_CLOUDFRONT_ID --paths '/*'
+
+  only:
+    - develop
+  tags:
+    - DEV
+
+deploy-staging:
+  stage: deploy
+  script:
+    - aws s3 sync --cache-control 'no-cache' --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_STG_S3_BUCKET
+    - aws configure set preview.cloudfront true
+    - aws cloudfront create-invalidation --distribution-id $CI_STG_CLOUDFRONT_ID --paths '/*'
+  only:
+    - staging
+  tags:
+    - STG
+    
+deploy-staging2:
+  stage: deploy
+  script:
+    - aws s3 sync --cache-control 'no-cache' --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_STG2_S3_BUCKET
+    - aws configure set preview.cloudfront true
+    - aws cloudfront create-invalidation --distribution-id $CI_STG2_CLOUDFRONT_ID --paths '/*'
+  only:
+    - staging2
+  tags:
+    - STG2
+
+deploy-production:
+  stage: deploy
+  script:
+    - aws s3 sync --cache-control 'no-cache' --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_PROD_S3_BUCKET
+    # - aws s3 sync --exclude '*' --include "*.svg" --no-guess-mime-type --content-type "image/svg+xml" --cache-control 'max-age=10' . $CI_PROD_S3_BUCKET --delete
+    # - aws s3 sync --cache-control 'max-age=10' --exclude "*.svg" --exclude index.html --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_PROD_S3_BUCKET --delete
+    # - aws s3 sync --cache-control 'no-cache' --exclude .gitlab-ci.yml --exclude ".git/" --exclude ".git/*" . $CI_PROD_S3_BUCKET
+    - aws configure set preview.cloudfront true
+    - aws cloudfront create-invalidation --distribution-id $CI_PROD_CLOUDFRONT_ID --paths '/*'
+  only:
+    - master
+  tags:
+    - PROD
